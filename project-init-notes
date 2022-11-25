@@ -1,6 +1,16 @@
 # crea tu virtualenv fuera del projecto en una carpeta externa
 python3 -m project-venv ../venvs/[project]-venv (Comando no testeado)
 source ../venvs/[project]-venv/bin/activate
+
+# CREA LAS VARIABLES DE ENTORNO NECESARIAS en el viertualenv/bin/activate
+Al final del archivo
+   COMPOSE_FILE="local.yml"
+
+Al final de la función deactivate()
+   unset COMPOSE_FILE
+
+Añade los hook a activate y deactivate
+
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 python manage.py migrate
