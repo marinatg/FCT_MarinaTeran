@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #ruta para establecer idioma
+    path('i18n/', include('django.conf.urls.i18n')),
     path('',include('main.urls')),
 ]
