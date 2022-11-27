@@ -4,10 +4,12 @@ source ../venvs/[project]-venv/bin/activate
 
 # CREA LAS VARIABLES DE ENTORNO NECESARIAS en el viertualenv/bin/activate
 Al final del archivo
-   COMPOSE_FILE="local.yml"
+   export COMPOSE_FILE="local.yml"
+   export DJANGO_SETTINGS_MODULE = config.settings.local
 
 Al final de la función deactivate()
    unset COMPOSE_FILE
+   unset DJANGO_SETTINGS_MODULE
 
 Añade los hook a activate y deactivate
 
