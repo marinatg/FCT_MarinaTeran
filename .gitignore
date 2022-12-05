@@ -134,3 +134,6 @@ dmypy.json
 
 #pyCharm folder
 .idea
+
+#ficheros .env
+.env

@@ -6,8 +6,8 @@ source ../venvs/[project]-venv/bin/activate
 # Compose file evita tener que pasar parámetro de file a docker-compose
 # Django settings evita tener que pasar --config a python manage.py
 Al final del archivo
-   export COMPOSE_FILE="local.yml"
-   export DJANGO_SETTINGS_MODULE = config.settings.local
+export COMPOSE_FILE="local.yml"
+export DJANGO_SETTINGS_MODULE="config.settings.local"
 
 Al final de la función deactivate()
    unset COMPOSE_FILE

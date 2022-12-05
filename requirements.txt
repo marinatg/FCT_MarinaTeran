@@ -7,6 +7,6 @@ django-environ
 #Postgres Requirement
 # sudo apt install python3-dev libpq-dev
 #development
-# psycopg2-binary
+psycopg2-binary
 #production ready
-psycopg2
+# psycopg2
