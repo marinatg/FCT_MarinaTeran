@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: django-base-pro_production_postgres
-    container_name: django-base-pro_local_postgres
+    container_name: fctMarina
     env_file:
       - ./.envs/.local/.postgres
     volumes:
