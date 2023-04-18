@@ -11,8 +11,40 @@
     <link rel="stylesheet" href="{% static 'css/tienda.css' %}">
 </head>
 <body>
+
+ <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top bg-dark">
+ <div class="container px-5">
+ <button type="button" class="btn btn-outline-info"><a href="#">
+ <i class="fa-solid fa-cart-shopping" style="color: #0dcaf0;">Carrito</i>
+ </a></button>
+
+ <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+ <div class="collapse navbar-collapse" id="navbarResponsive">
+ <ul class="navbar-nav ms-auto">
+ {% if user.is_authenticated %}
+ <li class="nav-item"><a class="nav-link" name="cerrarSesion" id="cerrarSesion" href="#" role="button">Cerrar sesion</a></li>
+ <li class="nav-item"><a class="nav-link" name="perfil" id="perfil" href="{% url 'perfil' %}" role="button">Mi Perfil</a></li>
+ {% else %}
+ <li class="nav-item"><a class="nav-link" name="resgistro" id="resgistro" href="#" role="button">Registro de usuario</a></li>
+ <li class="nav-item"><a class="nav-link" name="iniciarSesion" id="iniciarSesion" href="#" role="button">Iniciar sesion</a></li>
+ {% endif %}
+ </ul>
+ </div>
+ </div>
+ </nav>
+
 <div class="page-header">
-    <h1><a href="/">{% translate "Tienda Virtual" %}</a></h1>
+    <header  class="masthead text-center mb-3" id="about">
+    <div class="carousel-inner" >
+    <div class="carousel-item active" style="height: 500px;">
+      <img class="img-fluid mb-3" style="opacity: 0.6;" src="https://www.telemadrid.es/2022/02/15/noticias/madrid/Ampli-guitarra-pedal-local-ensayo_2424067615_30598376_1300x731.jpg">
+      <div class="carousel-caption d-none d-md-block">
+          <h1 class="masthead-heading position-absolute bottom-90 start-50 translate-middle" style="color: #560bad; text-shadow: 2px 2px #e63946;font-size: 50px;">Sala Mandala</h1>
+          <img class="img-fluid mt-10 mb-3" style="height: 300px;" src="https://static.vecteezy.com/system/resources/previews/011/999/578/original/mandala-for-design-hand-drawn-free-png.png">
+      </div>
+    </div>
+    </div>
+</header>
 </div>
 <div class="container-fluid">
     <div class="row">
