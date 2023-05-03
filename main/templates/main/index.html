@@ -9,7 +9,12 @@
 
     <div class="col-3" style="border: 1px solid black;">Filtros</div>
       <div class="col-1"></div>
-    <div class="col-6" style="border: 1px solid black;">Listado de conciertos</div>
+    <div class="col-6" style="border: 1px solid black;">
+        <h3>Listado de conciertos</h3>
+        {% for x in evento %}
+            <p>{{x.nombre}}</p>
+        {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

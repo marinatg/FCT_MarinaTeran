@@ -12,6 +12,7 @@ from main.models import *
 
 # Create your views here.
 
+
 """REGISTRO, LOGIN Y LOGOUT"""
 class Registro(CreateView):
     template_name = 'main/registro.html'
@@ -59,6 +60,7 @@ class IniciarSesion(View):
         else:
             login(request, user)
             return redirect('welcome')
+
 
 """PERFIL DE USUARIO"""
 class PerfilCliente(TemplateView):
@@ -114,3 +116,36 @@ class EliminarMetodoPago(DeleteView):
     fields = '__all__'
     def get_success_url(self, *args, **kwargs):
         return reverse('perfil')
+
+
+"""LISTADO DE EVENTOS"""
+class ListadoEventos(TemplateView):
+    template_name = 'main/index.html'
+    def get(self, request, *args, **kwargs):
+        evento = Evento.objects.all()
+        # producto = Producto.objects.all()
+        # categoria = Categoria.objects.all()
+        # busqueda = request.GET.get("buscar")
+        # busquedaH = request.GET.get("selectCategoria")
+        # busquedaP = request.GET.get("precio")
+        #
+        # if busqueda:
+        #
+        #     producto = Producto.objects.filter(nombre__icontains=busqueda)
+        #
+        # if busquedaH or busquedaP:
+        #     if busquedaH == "0":
+        #         if busquedaP == "0":
+        #             producto = Producto.objects.all().order_by('precio')
+        #         else:
+        #             producto = Producto.objects.all().order_by('-precio')
+        #     else:
+        #         if busquedaP == "0":
+        #             producto = Producto.objects.filter(categoria=busquedaH).order_by('precio')
+        #         else:
+        #             producto = Producto.objects.filter(categoria=busquedaH).order_by('-precio')
+
+        return render(request,self.template_name, {'evento':evento})
+
+
+"""FILTROS"""

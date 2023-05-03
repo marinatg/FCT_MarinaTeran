@@ -8,7 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #ruta para establecer idioma
     path('i18n/', include('django.conf.urls.i18n')),
-    path('', TemplateView.as_view(template_name='main/index.html'), name='welcome'),
+    #path('', TemplateView.as_view(template_name='main/index.html'), name='welcome'),
+    path('', views.ListadoEventos.as_view(), name='listadoEventos'),
     path('main/perfil/', views.PerfilCliente.as_view(), name='perfil'),
     path('main/registro/', views.Registro.as_view(), name='registro'),
     path('main/cerrarSesion/', views.CerrarSesion.as_view(), name='cerrarSesion'),
