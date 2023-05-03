@@ -3,11 +3,18 @@
     {% block content %}
     <table class="table table-info table-bordered mb-5">
         <h3 class="text-center">DATOS DE USUARIO:</h3>
+
+        <tr><button style="border: none;"><a class="btn btn-success" id="agregar" href="{% url 'agregarPerfil' %}" role="button">Añadir datos</a></button></tr>
+        <p></p>
+
         {% for z in perfil %}
         <tr>
+            <td>Nombre: {{ z.nombre }}</td>
             <td>Dni: {{ z.dni }}</td>
             <td>Direccion: {{ z.direccion }}</td>
-            <td><button style="border: none;"><a class="btn btn-primary" id="editar" href="#" role="button">Editar</a></button></td>
+
+            <td><button style="border: none;"><a class="btn btn-primary" id="editar" href="{% url 'editarPerfil' pk=z.id %}" role="button">Editar</a></button></td>
+            <td><button style="border: none;"><a class="btn btn-danger" id="eliminar" href="{% url 'eliminarPerfil' pk=z.id %}" role="button">Eliminar</a></button></td>
         </tr>
         {% endfor %}
     </table>
@@ -25,15 +32,14 @@
 
     <table class="table table-info table-bordered mb-5">
         <h3 class="text-center">METODOS DE PAGO:</h3>
-        <tr><button style="border: none;"><a class="btn btn-success mb-3" id="insertar1" href="#" role="button">Añadir Metodo de pago</a></button></tr>
-        {% for x in pago %}
+        <tr><button style="border: none;"><a class="btn btn-success mb-3" id="insertar1" href="{% url 'agregarMetodoPago' %}" role="button">Añadir Metodo de pago</a></button></tr>
+        {% for x in metodo_pago %}
         <tr>
-            <td>{{ x.metodo_pago }}</td>
-            <td>{{ x.num_tarjeta }}</td>
-            <td><div class="btn-group" role="group">
-            <button style="border: none;"><a class="btn btn-primary" id="editar1" href="#" role="button">Editar</a></button>
-            <button style="border: none;"><a class="btn btn-danger" id="eliminar1" href="#" role="button">Eliminar</a></button>
-            </div></td>
+            <td>Metodo de pago: {{ x.metodo_pago }}</td>
+            <td>Nº tarjeta: {{ x.num_tarjeta }}</td>
+
+            <td><button style="border: none;"><a class="btn btn-primary" id="editar1" href="{% url 'editarMetodoPago' pk=x.id %}" role="button">Editar</a></button></td>
+            <td><button style="border: none;"><a class="btn btn-danger" id="eliminar1" href="{% url 'eliminarMetodoPago' pk=x.id %}" role="button">Eliminar</a></button></td>
         </tr>
         {% endfor %}
     </table>

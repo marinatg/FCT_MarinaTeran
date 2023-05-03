@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+<html>
+
+    <body>
+
+    {% block content %}
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <label>¿Seguro que desea eliminar?</label><br>
+        <input type="submit" value="Eliminar">
+    </form>
+
+    {% endblock %}
+    </body>
+
+</html>
