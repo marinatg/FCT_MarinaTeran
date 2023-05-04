@@ -46,7 +46,7 @@ class Registro(CreateView):
 class CerrarSesion(View):
     def get(self, request, *args, **kwargs):
         logout(request)
-        return redirect('welcome')
+        return redirect('listadoEventos')
 
 class IniciarSesion(View):
     def get(self, request, *args, **kwargs):
@@ -59,7 +59,7 @@ class IniciarSesion(View):
             return render(request, 'main/iniciarSesion.html', {'form': AuthenticationForm, 'error': 'El usuario o la contraseña son incorrectos'})
         else:
             login(request, user)
-            return redirect('welcome')
+            return redirect('listadoEventos')
 
 
 """PERFIL DE USUARIO"""
@@ -70,10 +70,11 @@ class PerfilCliente(TemplateView):
         user = request.user
         num_user = user.id
         perfil = Perfil.objects.filter(usuario_id=num_user)
+        metodo_pago = Metodo_pago.objects.filter(usuario_id=num_user)
         "compras = self.model.objects.filter(perfil_id=perfil[0].id)"
         "pago = Metodo_pago.objects.filter(perfil_id=perfil[0].id)"
 
-        return render(request, self.template_name, {'perfil': perfil})
+        return render(request, self.template_name, {'perfil': perfil, 'metodo_pago': metodo_pago})
 
 class AgregarPerfil(CreateView):
     model = Perfil
@@ -123,15 +124,14 @@ class ListadoEventos(TemplateView):
     template_name = 'main/index.html'
     def get(self, request, *args, **kwargs):
         evento = Evento.objects.all()
-        # producto = Producto.objects.all()
-        # categoria = Categoria.objects.all()
-        # busqueda = request.GET.get("buscar")
+
+        busqueda = request.GET.get("buscar")
         # busquedaH = request.GET.get("selectCategoria")
         # busquedaP = request.GET.get("precio")
-        #
-        # if busqueda:
-        #
-        #     producto = Producto.objects.filter(nombre__icontains=busqueda)
+
+        if busqueda:
+
+            evento = Evento.objects.filter(nombre__icontains=busqueda)
         #
         # if busquedaH or busquedaP:
         #     if busquedaH == "0":

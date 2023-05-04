@@ -13,8 +13,8 @@
             <td>Dni: {{ z.dni }}</td>
             <td>Direccion: {{ z.direccion }}</td>
 
-            <td><button style="border: none;"><a class="btn btn-primary" id="editar" href="{% url 'editarPerfil' pk=z.id %}" role="button">Editar</a></button></td>
-            <td><button style="border: none;"><a class="btn btn-danger" id="eliminar" href="{% url 'eliminarPerfil' pk=z.id %}" role="button">Eliminar</a></button></td>
+            <td><button style="border: none; background-color: #caf0f8;"><a class="btn btn-primary" id="editar" href="{% url 'editarPerfil' pk=z.id %}" role="button">Editar</a></button>
+            <button style="border: none; background-color: #caf0f8;"><a class="btn btn-danger" id="eliminar" href="{% url 'eliminarPerfil' pk=z.id %}" role="button">Eliminar</a></button></td>
         </tr>
         {% endfor %}
     </table>
@@ -38,8 +38,8 @@
             <td>Metodo de pago: {{ x.metodo_pago }}</td>
             <td>Nº tarjeta: {{ x.num_tarjeta }}</td>
 
-            <td><button style="border: none;"><a class="btn btn-primary" id="editar1" href="{% url 'editarMetodoPago' pk=x.id %}" role="button">Editar</a></button></td>
-            <td><button style="border: none;"><a class="btn btn-danger" id="eliminar1" href="{% url 'eliminarMetodoPago' pk=x.id %}" role="button">Eliminar</a></button></td>
+            <td><button style="border: none; background-color: #caf0f8;"><a class="btn btn-primary" id="editar1" href="{% url 'editarMetodoPago' pk=x.id %}" role="button">Editar</a></button>
+            <button style="border: none; background-color: #caf0f8;"><a class="btn btn-danger" id="eliminar1" href="{% url 'eliminarMetodoPago' pk=x.id %}" role="button">Eliminar</a></button></td>
         </tr>
         {% endfor %}
     </table>

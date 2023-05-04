@@ -7,12 +7,46 @@
     <div class="container">
   <div class="row">
 
-    <div class="col-3" style="border: 1px solid black;">Filtros</div>
+    <div class="col-3">
+        <h5>Filtrar por:</h5><br>
+        <form method="get">
+            <input type="text" placeholder="Buscar producto..." name="buscar" style="width: 200px;">
+            <button class="btn btn-info" type="submit">Buscar</button>
+        </form>
+
+        <form>
+            <h6>Disponibilidad:</h6>
+            <input type="radio" id="todos" name="fav_language" value="2" checked>
+            <label for="todos">Todos</label><br>
+            <input type="radio" id="disponibles" name="fav_language" value="1">
+            <label for="disponibles">Con entradas disponibles</label><br>
+            <input type="radio" id="noDisponibles" name="fav_language" value="0">
+            <label for="noDisponibles">Sin entradas disponibles</label><br>
+        </form>
+
+        <form>
+            <h6>Fecha:</h6>
+            <label for="fecha">Desde:</label><br>
+            <input type="date" id="fecha" name="fecha">
+            <p></p>
+            <label for="fecha2">Hasta:</label><br>
+            <input type="date" id="fecha2" name="fecha2">
+        </form>
+    </div>
       <div class="col-1"></div>
-    <div class="col-6" style="border: 1px solid black;">
+    <div class="col-6">
         <h3>Listado de conciertos</h3>
         {% for x in evento %}
-            <p>{{x.nombre}}</p>
+            <div class="card mb-5" style="width: 28rem;">
+                <!--<a id="listadoEventos" href="#" class="card-img-top"><img src="{{ Evento.imagen.url }}" alt="{{ Evento.nombre }}"></a>-->
+                <a id="evento" href="#" role="button"><img class="card-img-top" src="{{ x.imagen.url }}" alt="{{ x.nombre }}"> </a>
+              <div class="card-body" style="background-color: #cdb4db;">
+                <h5 class="card-title">{{x.nombre}}</h5>
+                <h6>{{x.fecha_hora}}</h6>
+                <p class="card-text">Quedan {{x.disponibles}} entradas disponibles</p>
+                <a href="#" class="btn btn-info">Comprar entradas</a>
+              </div>
+            </div>
         {% endfor %}
     </div>
   </div>

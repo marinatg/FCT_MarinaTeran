@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-
+from django.contrib.staticfiles.urls import static
+from django.conf import settings
 from main import views
 
 urlpatterns = [
@@ -27,4 +28,4 @@ urlpatterns = [
          views.EditarMetodoPago.as_view(template_name='main/editarMetodoPago.html'), name='editarMetodoPago'),
     path('administrador/eliminarMetodoPago/<int:pk>',
          views.EliminarMetodoPago.as_view(template_name='main/eliminar.html'), name='eliminarMetodoPago'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

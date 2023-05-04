@@ -50,6 +50,7 @@ class Asiento(models.Model):
 
 class Evento(models.Model):
     nombre = models.CharField(max_length=10)
+    imagen = models.ImageField(upload_to='main/imagenes/')
     fecha_hora = models.DateTimeField()
     disponibles = models.IntegerField()
     sala = models.ForeignKey(Sala, on_delete=models.RESTRICT)
