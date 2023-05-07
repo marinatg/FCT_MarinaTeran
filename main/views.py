@@ -129,26 +129,52 @@ class ListadoEventos(TemplateView):
         evento = Evento.objects.all()
 
         busqueda = request.GET.get("buscar")
-        # busquedaH = request.GET.get("selectCategoria")
-        # busquedaP = request.GET.get("precio")
+        disponible = request.GET.get("disponibilidad")
+        fechaInicio = request.GET.get("fecha")
+        fechaFin = request.GET.get("fecha2")
 
         if busqueda:
 
             evento = Evento.objects.filter(nombre__icontains=busqueda)
-        #
-        # if busquedaH or busquedaP:
-        #     if busquedaH == "0":
-        #         if busquedaP == "0":
-        #             producto = Producto.objects.all().order_by('precio')
-        #         else:
-        #             producto = Producto.objects.all().order_by('-precio')
-        #     else:
-        #         if busquedaP == "0":
-        #             producto = Producto.objects.filter(categoria=busquedaH).order_by('precio')
-        #         else:
-        #             producto = Producto.objects.filter(categoria=busquedaH).order_by('-precio')
 
-        return render(request,self.template_name, {'evento':evento})
+        if disponible:
+            if disponible == '2':
+                if fechaInicio:
+                    if fechaFin:
+                        evento = Evento.objects.filter(fecha_hora__gte = fechaInicio, fecha_hora__lte = fechaFin)
+                    else:
+                        evento = Evento.objects.filter(fecha_hora__gte = fechaInicio)
+                else:
+                    if fechaFin:
+                        evento = Evento.objects.filter(fecha_hora__lte = fechaFin)
+                    else:
+                        evento = Evento.objects.all()
+            else:
+                if fechaInicio:
+                    if fechaFin:
+                        if disponible == '0':
+                            evento = Evento.objects.filter(fecha_hora__gte = fechaInicio, fecha_hora__lte = fechaFin, disponibles = '0')
+                        else:
+                            evento = Evento.objects.filter(fecha_hora__gte=fechaInicio, fecha_hora__lte=fechaFin,
+                                                           disponibles__gt = 0)
+                    else:
+                        if disponible == '0':
+                            evento = Evento.objects.filter(fecha_hora__gte = fechaInicio, disponibles = '0')
+                        else:
+                            evento = Evento.objects.filter(fecha_hora__gte=fechaInicio, disponibles__gt='0')
+                else:
+                    if fechaFin:
+                        if disponible == '0':
+                            evento = Evento.objects.filter(fecha_hora__lte = fechaFin, disponibles = '0')
+                        else:
+                            evento = Evento.objects.filter(fecha_hora__lte = fechaFin, disponibles__gt = '0')
+                    else:
+                        if disponible == '0':
+                            evento = Evento.objects.filter( disponibles = '0')
+                        else:
+                            evento = Evento.objects.filter(disponibles__gt='0')
+
+        return render(request,self.template_name, {'evento':evento, 'busqueda': busqueda, 'disponible': disponible, 'fechaInicio': fechaInicio, 'fechaFin': fechaFin})
 
 """EVENTO DETALLE"""
 
@@ -166,6 +192,7 @@ class EventoDetalle(View):
             Q(usuario_id=num_user)
         ).distinct()
 
+
         return render(request, self.template_name, contexto)
 
     @transaction.atomic
@@ -182,10 +209,9 @@ class EventoDetalle(View):
             unidadesC = formulario.cleaned_data['unidades']
         return render(request, self.template_name, contexto)
 
-# def generar_divs(request, num_divs):
-#     divs = []
-#     for i in range(num_divs):
-#         divs.append({"id": i+1, "html": f"<div><button>Botón {i+1}</button></div>"})
-#     return JsonResponse({"divs": divs})
+
+
+
+
 
 

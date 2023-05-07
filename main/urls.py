@@ -29,7 +29,5 @@ urlpatterns = [
     path('administrador/eliminarMetodoPago/<int:pk>',
          views.EliminarMetodoPago.as_view(template_name='main/eliminar.html'), name='eliminarMetodoPago'),
     path('main/eventoDetalle/<int:pk>', views.EventoDetalle.as_view(), name='eventoDetalle'),
-    # path('evento/<int:evento_id>/asientos/', views.asientos_evento, name='asientos_evento'),
-    # path('generar_divs/<int:num_divs>/', views.generar_divs, name='generar_divs'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

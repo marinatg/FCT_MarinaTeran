@@ -4,9 +4,29 @@
 <html>
 {% block content %}
 <head>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+      var num_divs = 5; // Cambiar por el número de divs que desees generar
 
+      for (var i = 0; i < num_divs; i++) {
+        var div = document.createElement("div");
+        div.setAttribute("id", "div-" + i);
+        div.innerHTML = "Contenido del div " + (i + 1);
+        document.getElementById("contenedor-divs").appendChild(div);
+      }
+
+      var buttons = document.getElementsByTagName("button");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", function() {
+          alert("¡Haz clic en un botón!");
+          // Agregar aquí la lógica para manejar el clic del botón
+        });
+      }
+    });
+  </script>
 </head>
-
+<body>
 <div class="container">
 
   <div class="row align-items-start">
@@ -47,5 +67,6 @@
         </div>
     </div>
 </div>
+</body>
 {% endblock %}
 </html>

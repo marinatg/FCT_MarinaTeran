@@ -56,7 +56,7 @@ class Evento(models.Model):
     sala = models.ForeignKey(Sala, on_delete=models.RESTRICT)
 
     def __str__(self):
-        return str(self.nombre)
+        return 'Nombre: %s Fecha: %s' % (self.nombre, self.fecha_hora)
 
 class Zona_evento(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.RESTRICT)
@@ -74,4 +74,4 @@ class Asiento_evento(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, null=True)
 
     def __str__(self):
-        return 'Zona: %s Evento: %s Asiento: %s' % (self.zona, self.evento, self.asiento)
+        return 'Zona: %s Asiento: %s' % (self.zona_evento, self.asiento)

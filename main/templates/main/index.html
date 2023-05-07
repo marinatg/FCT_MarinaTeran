@@ -19,26 +19,40 @@
 
         <form>
             <h5 class="col-md-9 text-center">Disponibilidad:</h5>
-            <input type="radio" id="todos" name="fav_language" value="2" checked>
+             <input type="radio" id="todos" name="disponibilidad" value="2" {% if not disponible or disponible == '2' %}checked{% endif %}>
             <label for="todos">Todos</label><br>
-            <input type="radio" id="disponibles" name="fav_language" value="1">
-            <label for="disponibles">Con entradas disponibles</label><br>
-            <input type="radio" id="noDisponibles" name="fav_language" value="0">
-            <label for="noDisponibles">Sin entradas disponibles</label><br>
-        </form>
 
-        <form>
+            <input type="radio" id="disponibles" name="disponibilidad" value="1" {% if disponible == '1' %}checked{% endif %}>
+            <label for="disponibles">Con entradas disponibles</label><br>
+
+            <input type="radio" id="noDisponibles" name="disponibilidad" value="0" {% if disponible == '0' %}checked{% endif %}>
+            <label for="noDisponibles">Sin entradas disponibles</label><br>
+
+
             <h5 class="col-md-9 text-center mb-2 p-2">Fecha:</h5>
             <div class="col-md-9 text-center">
                 <label for="fecha">Desde:</label><br>
-                <input type="date" id="fecha" name="fecha">
+                <input type="date" id="fecha" name="fecha" value="{{ fechaInicio }}">
             </div>
             <p></p>
             <div class="col-md-9 text-center">
                 <label for="fecha2">Hasta:</label><br>
-                <input type="date" id="fecha2" name="fecha2">
+                <input type="date" id="fecha2" name="fecha2" min="" value="{{ fechaFin }}">
             </div>
+
+            <button class="btn btn-info mb-3" type="submit">Aplicar filtros</button>
+
+            <script>
+                const fechaInput = document.getElementById('fecha');
+                const fecha2Input = document.getElementById('fecha2');
+                fecha2Input.min = fechaInput.value;
+                fechaInput.addEventListener('input', function() {
+                    fecha2Input.min = fechaInput.value;
+                });
+            </script>
+
         </form>
+
     </div>
       <div class="col-1"></div>
     <div class="col-6">
