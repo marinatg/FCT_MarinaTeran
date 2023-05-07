@@ -2,11 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import *
 from django.db import transaction
+from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
+from main.forms import UnidadesForm
 from main.models import *
 
 
@@ -119,7 +122,7 @@ class EliminarMetodoPago(DeleteView):
         return reverse('perfil')
 
 
-"""LISTADO DE EVENTOS"""
+"""LISTADO DE EVENTOS Y FILTRADO"""
 class ListadoEventos(TemplateView):
     template_name = 'main/index.html'
     def get(self, request, *args, **kwargs):
@@ -147,5 +150,42 @@ class ListadoEventos(TemplateView):
 
         return render(request,self.template_name, {'evento':evento})
 
+"""EVENTO DETALLE"""
 
-"""FILTROS"""
+class EventoDetalle(View):
+    model = Evento
+    form_class = UnidadesForm
+    template_name = 'main/eventoDetalle.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        contexto = {}
+        contexto['evento'] = Evento.objects.get(id=pk)
+        user = request.user
+        num_user = user.id
+        contexto['perfil'] = Perfil.objects.filter(
+            Q(usuario_id=num_user)
+        ).distinct()
+
+        return render(request, self.template_name, contexto)
+
+    @transaction.atomic
+    def post(self, request, pk, *args, **kwargs):
+        formulario = self.form_class(request.POST)
+        if formulario.is_valid():
+            contexto = {}
+            contexto['evento'] = Evento.objects.get(id=pk)
+            user = request.user
+            num_user = user.id
+            contexto['perfil'] = Perfil.objects.filter(
+                Q(usuario_id=num_user)
+            ).distinct()
+            unidadesC = formulario.cleaned_data['unidades']
+        return render(request, self.template_name, contexto)
+
+# def generar_divs(request, num_divs):
+#     divs = []
+#     for i in range(num_divs):
+#         divs.append({"id": i+1, "html": f"<div><button>Botón {i+1}</button></div>"})
+#     return JsonResponse({"divs": divs})
+
+

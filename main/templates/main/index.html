@@ -2,20 +2,23 @@
 {% load i18n %}
 
 {% block content %}
-    <h2>{% translate "Encuentra tu concierto..." %}</h2>
+
 
     <div class="container">
   <div class="row">
 
-    <div class="col-3">
-        <h5>Filtrar por:</h5><br>
+    <div class="col-3 ">
+        <h3 class="col-md-9 text-center">Filtrar por:</h3><br>
         <form method="get">
-            <input type="text" placeholder="Buscar producto..." name="buscar" style="width: 200px;">
-            <button class="btn btn-info" type="submit">Buscar</button>
+            <input type="text" placeholder="Buscar producto..." name="buscar" style="width: 200px; height: 35px; border-radius: 10px;">
+            <p></p>
+            <div class="col-md-9 text-center">
+            <button class="btn btn-info mb-3" type="submit">Buscar</button>
+            </div>
         </form>
 
         <form>
-            <h6>Disponibilidad:</h6>
+            <h5 class="col-md-9 text-center">Disponibilidad:</h5>
             <input type="radio" id="todos" name="fav_language" value="2" checked>
             <label for="todos">Todos</label><br>
             <input type="radio" id="disponibles" name="fav_language" value="1">
@@ -25,21 +28,25 @@
         </form>
 
         <form>
-            <h6>Fecha:</h6>
-            <label for="fecha">Desde:</label><br>
-            <input type="date" id="fecha" name="fecha">
+            <h5 class="col-md-9 text-center mb-2 p-2">Fecha:</h5>
+            <div class="col-md-9 text-center">
+                <label for="fecha">Desde:</label><br>
+                <input type="date" id="fecha" name="fecha">
+            </div>
             <p></p>
-            <label for="fecha2">Hasta:</label><br>
-            <input type="date" id="fecha2" name="fecha2">
+            <div class="col-md-9 text-center">
+                <label for="fecha2">Hasta:</label><br>
+                <input type="date" id="fecha2" name="fecha2">
+            </div>
         </form>
     </div>
       <div class="col-1"></div>
     <div class="col-6">
-        <h3>Listado de conciertos</h3>
+        <h3 class="col-md-9 text-center p-2">Listado de conciertos</h3>
         {% for x in evento %}
             <div class="card mb-5" style="width: 28rem;">
                 <!--<a id="listadoEventos" href="#" class="card-img-top"><img src="{{ Evento.imagen.url }}" alt="{{ Evento.nombre }}"></a>-->
-                <a id="evento" href="#" role="button"><img class="card-img-top" src="{{ x.imagen.url }}" alt="{{ x.nombre }}"> </a>
+                <a id="evento" href="{% url 'eventoDetalle' pk=x.id %}" role="button"><img class="card-img-top" src="{{ x.imagen.url }}" alt="{{ x.nombre }}"> </a>
               <div class="card-body" style="background-color: #cdb4db;">
                 <h5 class="card-title">{{x.nombre}}</h5>
                 <h6>{{x.fecha_hora}}</h6>

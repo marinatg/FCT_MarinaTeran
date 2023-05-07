@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+
+<html>
+{% block content %}
+<head>
+
+</head>
+
+<div class="container">
+
+  <div class="row align-items-start">
+    <div class="row">
+        <div class="col rounded float-start  m-5"><h1 style="font-family: Arial Black; font-weight: bold; font-size: 60px; color: #b392ac; text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;">Concierto de {{ evento.nombre }}</h1></div>
+      <div class="col rounded float-end"><img class="col rounded float-end m-5" src="{{ evento.imagen.url }}" height="230"/></div>
+    </div>
+  </div>
+
+    <div class="row">
+
+        <div class="col">
+            <div id="contenedor-divs"></div>
+
+        </div>
+
+        <div class="col">
+          <div class="card">
+          <div class="card-body">
+
+                <h5 class="card-subtitle">Fecha:</h5>
+                <p>{{ evento.fecha_hora }}</p>
+                <hr/>
+                <p class="card-text">Sala: {{ evento.sala.nombre }}.</p>
+                <hr/>
+              {% if evento.disponibles == 0 %}
+                <p class="alert alert-danger">Entradas no disponibles</p>
+              {% else %}
+                <p>Entradas disponibles: {{ evento.disponibles }} uds.</p>
+                <form  enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <label>Uds:</label>
+                    <input type="number" name="unidades" max="{{ evento.disponibles }}">
+                    <input name="" id="btn" class="btn btn-success" type="submit" value="Comprar">
+                </form>
+              {% endif %}
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</html>
