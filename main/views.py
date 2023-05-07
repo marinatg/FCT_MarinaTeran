@@ -184,16 +184,23 @@ class EventoDetalle(View):
     template_name = 'main/eventoDetalle.html'
 
     def get(self, request, pk, *args, **kwargs):
-        contexto = {}
-        contexto['evento'] = Evento.objects.get(id=pk)
+        zona = request.GET.get("zona")
+        evento = Evento.objects.get(id=pk)
         user = request.user
         num_user = user.id
-        contexto['perfil'] = Perfil.objects.filter(
+        perfil = Perfil.objects.filter(
             Q(usuario_id=num_user)
         ).distinct()
 
+        zonas = Zona_evento.objects.filter(evento=pk)
+        asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
 
-        return render(request, self.template_name, contexto)
+        if zona:
+            asientos = Asiento_evento.objects.filter(zona_evento=zona)
+
+
+        print(asientos)
+        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zona': zona, 'asientos': asientos})
 
     @transaction.atomic
     def post(self, request, pk, *args, **kwargs):
