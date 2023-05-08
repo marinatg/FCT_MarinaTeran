@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 
 <html>
 {% block content %}
@@ -42,15 +42,44 @@
             <h3>Escoge una zona: </h3>
             <form method="get">
             {% for z in zonas %}
-            <input type="radio" id="zona{{ forloop.counter }}" name="zona" value="{{ z.id }}" {% if zona == z.id %}checked{% endif %}>
-            <label for="zona{{ forloop.counter }}">{{z.zona}} ({{z.precio}}€)</label><br>
+                {{ zonita }}
+                {{ forloop.counter }}
+                {% if zonita == forloop.counter %}
+                    <input type="radio" id="zona{{ forloop.counter }}" name="zona" value="{{ forloop.counter }}" checked>
+                {% else %}
+                    <input type="radio" id="zona{{ forloop.counter }}" name="zona" value="{{ forloop.counter }}" >
+                {% endif %}
+                <label for="zona{{ forloop.counter }}">{{z.zona}} ({{z.precio}}€)</label><br>
             {% endfor %}
             <p></p>
             <button class="btn btn-info mb-3" type="submit">Ver asientos</button>
             </form>
-            <div id="contenedor-divs"></div>
 
-        </div>
+
+
+
+            <div style="border: 1px solid purple;">
+                <table>
+                    <tr>
+            {% for a in asientos %}
+
+
+                        <td>
+                        <input type="checkbox" id="{{a.id}}" name="scales">
+                        <label for="{{a.id}}">{{ a.asiento }}</label>
+                        </td>
+                    {% if forloop.counter|divisibleby:4 %}
+                        </tr>
+                    <tr>
+                    {% endif %}
+
+            {% endfor %}
+                    </tr>
+                     </table>
+                </div>
+            </div>
+
+
 
         <div class="col">
           <div class="card">
@@ -76,6 +105,9 @@
         </div>
     </div>
 </div>
+
+
+
 </body>
 {% endblock %}
 </html>

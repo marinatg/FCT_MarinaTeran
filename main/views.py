@@ -193,14 +193,25 @@ class EventoDetalle(View):
         ).distinct()
 
         zonas = Zona_evento.objects.filter(evento=pk)
-        asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
+        zonita = zona
 
-        if zona:
-            asientos = Asiento_evento.objects.filter(zona_evento=zona)
+        if zonita:
+            if zonita == '1':
+                zonita = 1
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
+            if zonita == '2':
+                zonita = 2
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[1].id)
+            if zonita == '3':
+                zonita = 3
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[2].id)
 
+        else:
+            zonita = 1
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
 
         print(asientos)
-        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zona': zona, 'asientos': asientos})
+        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos})
 
     @transaction.atomic
     def post(self, request, pk, *args, **kwargs):
