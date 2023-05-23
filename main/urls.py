@@ -29,5 +29,7 @@ urlpatterns = [
     path('administrador/eliminarMetodoPago/<int:pk>',
          views.EliminarMetodoPago.as_view(template_name='main/eliminar.html'), name='eliminarMetodoPago'),
     path('main/eventoDetalle/<int:pk>', views.EventoDetalle.as_view(), name='eventoDetalle'),
+    path('main/sgregarSala/', views.AgregarSala.as_view(template_name='main/agregarSala.html'),
+                       name='agregarSala'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

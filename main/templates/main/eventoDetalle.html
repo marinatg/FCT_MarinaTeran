@@ -7,23 +7,27 @@
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
       document.addEventListener("DOMContentLoaded", function() {
-      var num_divs = 5; // Cambiar por el número de divs que desees generar
+      console.log("dentro de la funcion");
+        var asientos = document.getElementById("asientosDisponibles");
+        console.log(asientos);
+        var arrayAsientos = asientos.getElementsByTagName("input");
+        console.log(arrayAsientos);
+        var unidades = document.getElementById("unidades");
+        var uds = unidades.value;
 
-      for (var i = 0; i < num_divs; i++) {
-        var div = document.createElement("div");
-        div.setAttribute("id", "div-" + i);
-        div.innerHTML = "Contenido del div " + (i + 1);
-        document.getElementById("contenedor-divs").appendChild(div);
-      }
-
-      var buttons = document.getElementsByTagName("button");
-      for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener("click", function() {
-
-          // Agregar aquí la lógica para manejar el clic del botón
-        });
-      }
-    });
+        for(var i = 0; i < arrayAsientos.length; i++){
+           arrayAsientos[i].addEventListener('change', function(){
+                if (this.checked) {
+                    console.log("dentro del if");
+                    uds = parseInt(uds) + 1;
+                    unidades.value = parseInt(uds);
+                }else {
+                    uds = uds - 1;
+                    unidades.value = uds;
+                }
+            });
+        }
+      });
   </script>
 </head>
 <body>
@@ -56,16 +60,18 @@
             </form>
 
 
-
+        <form  enctype="multipart/form-data" method="post">
 
             <div style="border: 1px solid purple;">
-                <table>
+                <table id="asientosDisponibles">
                     <tr>
             {% for a in asientos %}
-
-
                         <td>
+                        {% if a.estado == False %}
                         <input type="checkbox" id="{{a.id}}" name="scales">
+                        {% else %}
+                         <input type="checkbox" id="{{a.id}}" name="scales" disabled>
+                        {% endif %}
                         <label for="{{a.id}}">{{ a.asiento }}</label>
                         </td>
                     {% if forloop.counter|divisibleby:4 %}
@@ -93,11 +99,11 @@
               {% if evento.disponibles == 0 %}
                 <p class="alert alert-danger">Entradas no disponibles</p>
               {% else %}
-                <p>Entradas disponibles: {{ evento.disponibles }} uds.</p>
-                <form  enctype="multipart/form-data" method="post">
+                <p>Entradas disponibles: {{ zonaElegida.disponibles }} uds.</p>
+
                     {% csrf_token %}
-                    <label>Uds:</label>
-                    <input type="number" name="unidades" max="{{ evento.disponibles }}">
+                    <label>Uds: </label>
+                    <input type="number" id="unidades" name="unidades" value=0 readonly>
                     <input name="" id="btn" class="btn btn-success" type="submit" value="Comprar">
                 </form>
               {% endif %}

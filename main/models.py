@@ -65,7 +65,7 @@ class Zona_evento(models.Model):
     precio = models.FloatField()
 
     def __str__(self):
-        return 'Zona: %s Evento: %s ' % (self.zona, self.evento)
+        return 'ID: %s Zona: %s Evento: %s Disponibles: %s' % (self.id, self.zona, self.evento, self.disponibles)
 
 class Asiento_evento(models.Model):
     zona_evento = models.ForeignKey(Zona_evento, on_delete=models.RESTRICT)

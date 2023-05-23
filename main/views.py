@@ -210,8 +210,10 @@ class EventoDetalle(View):
             zonita = 1
             asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
 
-        print(asientos)
-        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos})
+        zonaElegida = Zona_evento.objects.get(evento=pk, zona=zonita)
+
+        print(zonaElegida)
+        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
 
     @transaction.atomic
     def post(self, request, pk, *args, **kwargs):
@@ -228,7 +230,14 @@ class EventoDetalle(View):
         return render(request, self.template_name, contexto)
 
 
+"""Agregar sala crud"""
+class AgregarSala(CreateView):
+    model = Sala
+    template_name = 'main/insertarSala.html'
+    fields = '__all__'
 
+    def get_success_url(self):
+        return reverse('listadoEventos')
 
 
 
