@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+<html>
+{% block content %}
+<div class="container-flex align-items-center">
+    <h1 class="text-center">Panel de administración</h1>
+      <p></p>
+
+    <table class="table table-hover">
+        <tr class="table-danger"><td>
+        {% for x in sala %}
+            <ul><li><a class="link-dark" name="sala" id="sala" href="{% url 'administrarSala' pk=x.id %}" role="button">{{ x.nombre }}</a></li></ul>
+        {% endfor %}
+        </td></tr>
+        <tr class="table-info text-center"><td><a class="link-dark" name="agregarSala" id="agregarSala" href="{% url 'agregarSala' %}" role="button">Agregar una nueva Sala</a></td></tr>
+        <tr><td><p></p></td></tr>
+        <tr class="table-danger"><td>
+        {% for x in evento %}
+        <ul><li><a class="link-dark" name="evento" id="evento" href="#" role="button">{{ x.nombre }}</a></li></ul>
+        {% endfor %}
+        </td></tr>
+        <tr class="table-info text-center"><td><a class="link-dark" name="agregarEvento" id="agregarEvento" href="{% url 'agregarEvento' %}" role="button">Agregar un nuevo evento</a></td></tr>
+    </table>
+</div>
+{% endblock %}
+</html>

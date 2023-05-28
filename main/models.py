@@ -39,14 +39,14 @@ class Zona(models.Model):
     aforo = models.IntegerField()
 
     def __str__(self):
-        return str(self.nombre)
+        return 'Sala: %s Nombre: %s Id: %s Aforo: %s' % (self.sala, self.nombre, self.id, self.aforo)
 
 class Asiento(models.Model):
     zona = models.ForeignKey(Zona, on_delete=models.RESTRICT)
     nombre = models.CharField(max_length=10)
 
     def __str__(self):
-        return str(self.nombre)
+        return 'Zona: %s Nombre: %s Id: %s' % (self.zona, self.nombre, self.id)
 
 class Evento(models.Model):
     nombre = models.CharField(max_length=10)
@@ -74,4 +74,4 @@ class Asiento_evento(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, null=True)
 
     def __str__(self):
-        return 'Zona: %s Asiento: %s' % (self.zona_evento, self.asiento)
+        return 'ID: %s Zona: %s Asiento: %s' % (self.id, self.zona_evento, self.asiento)

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+<html>
+{% block content %}
+<div class="container-flex align-items-center">
+    <h1 class="text-center">Panel de administración</h1>
+      <p></p>
+
+    <table class="table table-hover">
+        <tr class="table-danger"><td>
+        {% for x in zona %}
+            <ul>
+                <li>
+                    <a class="link-dark" name="zona" id="zona" href="#" role="button">{{ x.nombre }}</a>
+                    {% for y in asiento %}
+                        {% for z in y %}
+                            {% if z.zona.id == x.id %}
+                        <ul>
+                            <li><a class="link-dark" name="asiento" id="asiento" href="#" role="button">{{ z.nombre }}</a></li>
+                        </ul>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endfor %}
+                </li>
+            </ul>
+        {% endfor %}
+        </td></tr>
+        <tr class="table-info text-center"><td><a class="link-dark" name="agregarZona" id="agregarZona" href="#" role="button">Agregar una nueva Zona</a></td></tr>
+    </table>
+</div>
+{% endblock %}
+</html>

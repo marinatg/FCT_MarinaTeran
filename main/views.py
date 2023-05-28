@@ -212,32 +212,84 @@ class EventoDetalle(View):
 
         zonaElegida = Zona_evento.objects.get(evento=pk, zona=zonita)
 
-        print(zonaElegida)
+        unidades = request.GET.get("unidades", "0")
+        print("textito antes " + unidades)
+        asientosElegidos = []
+        if unidades > "0":
+            print("mayor que 0")
+            print(asientos)
+            for i in asientos:
+                asientoEvento = request.GET.get(str(i.id), "False")
+                print(i.id)
+                print(asientoEvento)
+                if asientoEvento != "False":
+                    asientosElegidos.append(asientoEvento)
+                    print(asientosElegidos)
+        else:
+            print("cero")
+
         return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
 
-    @transaction.atomic
-    def post(self, request, pk, *args, **kwargs):
-        formulario = self.form_class(request.POST)
-        if formulario.is_valid():
-            contexto = {}
-            contexto['evento'] = Evento.objects.get(id=pk)
-            user = request.user
-            num_user = user.id
-            contexto['perfil'] = Perfil.objects.filter(
-                Q(usuario_id=num_user)
-            ).distinct()
-            unidadesC = formulario.cleaned_data['unidades']
-        return render(request, self.template_name, contexto)
+    # @transaction.atomic
+    # def post(self, request, pk, *args, **kwargs):
+    #     formulario = self.form_class(request.POST)
+    #     if formulario.is_valid():
+    #     #     contexto = {}
+    #     #     contexto['evento'] = Evento.objects.get(id=pk)
+    #     #     user = request.user
+    #     #     num_user = user.id
+    #     #     contexto['perfil'] = Perfil.objects.filter(
+    #     #         Q(usuario_id=num_user)
+    #     #     ).distinct()
+    #         #asientoElegido = formulario.cleaned_data['21', False]
+    #         asientoElegido = request.POST.get("21", False)
+    #         #unidades = request.POST.get("unidades")
+    #         unidades = formulario.cleaned_data['unidades']
+    #         print(asientoElegido)
+    #         print(unidades)
+    #         print(formulario)
+    #
+    #     return render(request, self.template_name)
 
 
-"""Agregar sala crud"""
+"""Panel de administración"""
+class PanelAdmin(TemplateView):
+    template_name = 'PanelAdmin/panelAdmin.html'
+
+    def get(self, request, *args, **kwargs):
+        sala = Sala.objects.all()
+        evento = Evento.objects.all()
+
+        return render(request, 'PanelAdmin/panelAdmin.html', {'sala': sala, 'evento': evento})
+
+class AdministrarSala(View):
+    model = Sala
+    template_name = 'PanelAdmin/administrarSala.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        zona = Zona.objects.filter(sala=pk)
+        asiento = []
+        for i in zona:
+            asiento_zona = Asiento.objects.filter(zona=i.id)
+            asiento.append(asiento_zona)
+        print(len(asiento))
+        return render(request, self.template_name, {'zona': zona, 'asiento': asiento})
+
 class AgregarSala(CreateView):
     model = Sala
-    template_name = 'main/insertarSala.html'
+    template_name = 'PanelAdmin/agregarrSala.html'
     fields = '__all__'
 
     def get_success_url(self):
-        return reverse('listadoEventos')
+        return reverse('panelAdmin')
+
+class AgregarEvento(CreateView):
+    model = Evento
+    template_name = 'PanelAdmin/agregarEvento.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('panelAdmin')
 
 
 

@@ -43,8 +43,8 @@
     <div class="row">
 
         <div class="col">
-            <h3>Escoge una zona: </h3>
-            <form method="get">
+        <h3>Escoge una zona: </h3>
+        <form method="get">
             {% for z in zonas %}
                 {{ zonita }}
                 {{ forloop.counter }}
@@ -53,43 +53,46 @@
                 {% else %}
                     <input type="radio" id="zona{{ forloop.counter }}" name="zona" value="{{ forloop.counter }}" >
                 {% endif %}
-                <label for="zona{{ forloop.counter }}">{{z.zona}} ({{z.precio}}€)</label><br>
+                <label for="zona{{ forloop.counter }}">{{z.zona.nombre}} ({{z.precio}}€)</label><br>
             {% endfor %}
             <p></p>
             <button class="btn btn-info mb-3" type="submit">Ver asientos</button>
-            </form>
+        </form>
 
 
-        <form  enctype="multipart/form-data" method="post">
 
-            <div style="border: 1px solid purple;">
-                <table id="asientosDisponibles">
-                    <tr>
-            {% for a in asientos %}
-                        <td>
-                        {% if a.estado == False %}
-                        <input type="checkbox" id="{{a.id}}" name="scales">
-                        {% else %}
-                         <input type="checkbox" id="{{a.id}}" name="scales" disabled>
-                        {% endif %}
-                        <label for="{{a.id}}">{{ a.asiento }}</label>
-                        </td>
-                    {% if forloop.counter|divisibleby:4 %}
-                        </tr>
-                    <tr>
+
+        <div style="border: 1px solid purple;">
+        <form  enctype="multipart/form-data" method="get">
+
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <table id="asientosDisponibles">
+                <tr>
+        {% for a in asientos %}
+                    <td>
+                    {% if a.estado == False %}
+                    <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}">
+                    {% else %}
+                     <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}" disabled>
                     {% endif %}
+                    <label for="{{a.id}}">{{ a.asiento.nombre }}</label>
+                    </td>
+                {% if forloop.counter|divisibleby:4 %}
+                </tr>
+                <tr>
+                {% endif %}
 
-            {% endfor %}
-                    </tr>
-                     </table>
+        {% endfor %}
+                </tr>
+             </table>
                 </div>
             </div>
 
-
-
-        <div class="col">
-          <div class="card">
-          <div class="card-body" style="background-color: #b392ac;">
+            <div class="col">
+            <div class="card">
+            <div class="card-body" style="background-color: #b392ac;">
 
                 <h5 class="card-subtitle">Fecha:</h5>
                 <p>{{ evento.fecha_hora }}</p>
@@ -101,19 +104,18 @@
               {% else %}
                 <p>Entradas disponibles: {{ zonaElegida.disponibles }} uds.</p>
 
-                    {% csrf_token %}
                     <label>Uds: </label>
                     <input type="number" id="unidades" name="unidades" value=0 readonly>
-                    <input name="" id="btn" class="btn btn-success" type="submit" value="Comprar">
-                </form>
+              <button class="btn btn-success" name="boton" type="submit">Comprar</button>
+        </form>
               {% endif %}
-          </div>
+            </div>
         </div>
     </div>
 </div>
 
 
-
+</div>
 </body>
 {% endblock %}
 </html>

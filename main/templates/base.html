@@ -16,6 +16,7 @@
  <div class="container px-5">
  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
  <div class="collapse navbar-collapse" id="navbarResponsive">
+<a class="link-info" id="panelAdmin" href="{% url 'panelAdmin' %}" role="button">Panel de administracion</a>
      <ul class="navbar-nav ms-auto">
          {% if user.is_authenticated %}
          <li class="nav-item"><a class="nav-link" name="cerrarSesion" id="cerrarSesion" href="{% url 'cerrarSesion' %}" role="button">Cerrar sesion</a></li>
