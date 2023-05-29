@@ -283,6 +283,19 @@ class AgregarSala(CreateView):
     def get_success_url(self):
         return reverse('panelAdmin')
 
+class EditarSala(UpdateView):
+    model = Sala
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarSala(DeleteView):
+    model = Sala
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
 class AgregarEvento(CreateView):
     model = Evento
     template_name = 'PanelAdmin/agregarEvento.html'
@@ -291,6 +304,62 @@ class AgregarEvento(CreateView):
     def get_success_url(self):
         return reverse('panelAdmin')
 
+class EditarEvento(UpdateView):
+    model = Evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarEvento(DeleteView):
+    model = Evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+class AgregarZona(CreateView):
+    model = Zona
+    template_name = 'PanelAdmin/agregarZona.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('panelAdmin')
+
+class EditarZona(UpdateView):
+    model = Zona
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarZona(DeleteView):
+    model = Zona
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class AgregarAsiento(CreateView):
+    model = Asiento
+    template_name = 'PanelAdmin/agregarAsiento.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('panelAdmin')
+
+class EditarAsiento(UpdateView):
+    model = Asiento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarAsiento(DeleteView):
+    model = Asiento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
 
 
 

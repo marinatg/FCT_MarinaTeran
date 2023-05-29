@@ -25,6 +25,16 @@ urlpatterns = [
     path('PanelAdmin/panelAdmin/', views.PanelAdmin.as_view(), name='panelAdmin'),
     path('PanelAdmin/administrarSala/<int:pk>', views.AdministrarSala.as_view(), name='administrarSala'),
     path('PanelAdmin/agregarSala/', views.AgregarSala.as_view(template_name='PanelAdmin/agregarSala.html'), name='agregarSala'),
+    path('PanelAdmin/editarSala/<int:pk>', views.EditarSala.as_view(template_name='PanelAdmin/editarSala.html'), name='editarSala'),
+    path('PanelAdmin/eliminarSala/<int:pk>', views.EliminarSala.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarSala'),
     path('PanelAdmin/agregarEvento/', views.AgregarEvento.as_view(template_name='PanelAdmin/agregarEvento.html'), name='agregarEvento'),
+    path('PanelAdmin/editarEvento/<int:pk>', views.EditarEvento.as_view(template_name='PanelAdmin/editarEvento.html'), name='editarEvento'),
+    path('PanelAdmin/eliminarEvento/<int:pk>', views.EliminarEvento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarEvento'),
+    path('PanelAdmin/agregarZona/', views.AgregarZona.as_view(template_name='PanelAdmin/agregarZona.html'), name='agregarZona'),
+    path('PanelAdmin/editarZona/<int:pk>',views.EditarZona.as_view(template_name='PanelAdmin/editarZona.html'), name='editarZona'),
+    path('PanelAdmin/eliminarZona/<int:pk>', views.EliminarZona.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarZona'),
+    path('PanelAdmin/agregarAsiento/', views.AgregarAsiento.as_view(template_name='PanelAdmin/agregarAsiento.html'), name='agregarAsiento'),
+    path('PanelAdmin/editarAsiento/<int:pk>', views.EditarAsiento.as_view(template_name='PanelAdmin/editarAsiento.html'), name='editarAsiento'),
+    path('PanelAdmin/eliminarAsiento/<int:pk>', views.EliminarAsiento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarAsiento'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

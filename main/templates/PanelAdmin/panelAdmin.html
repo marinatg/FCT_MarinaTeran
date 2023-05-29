@@ -3,22 +3,41 @@
 {% block content %}
 <div class="container-flex align-items-center">
     <h1 class="text-center">Panel de administración</h1>
-      <p></p>
-
     <table class="table table-hover">
-        <tr class="table-danger"><td>
-        {% for x in sala %}
-            <ul><li><a class="link-dark" name="sala" id="sala" href="{% url 'administrarSala' pk=x.id %}" role="button">{{ x.nombre }}</a></li></ul>
-        {% endfor %}
-        </td></tr>
+        <tr><td><h6 class="text-center">Salas</h6></td></tr>
         <tr class="table-info text-center"><td><a class="link-dark" name="agregarSala" id="agregarSala" href="{% url 'agregarSala' %}" role="button">Agregar una nueva Sala</a></td></tr>
-        <tr><td><p></p></td></tr>
-        <tr class="table-danger"><td>
-        {% for x in evento %}
-        <ul><li><a class="link-dark" name="evento" id="evento" href="#" role="button">{{ x.nombre }}</a></li></ul>
-        {% endfor %}
-        </td></tr>
+        <tr class="table-secondary">
+            <td>
+                <table class="table table-striped">
+                 {% for x in sala %}
+                    <tr class="table-primary">
+                        <td><a class="link-dark" name="sala" id="sala" href="{% url 'administrarSala' pk=x.id %}" role="button">{{ x.nombre }}</a></td>
+                        <td class="text-end">
+                            <a class="link-primary" id="editar" href="{% url 'editarSala' pk=x.id %}" role="button">Editar</a>
+                            <a class="link-danger" id="eliminar" href="{% url 'eliminarSala' pk=x.id %}" role="button">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr><td><h6 class="text-center">Eventos</h6></td></tr>
         <tr class="table-info text-center"><td><a class="link-dark" name="agregarEvento" id="agregarEvento" href="{% url 'agregarEvento' %}" role="button">Agregar un nuevo evento</a></td></tr>
+        <tr class="table-secondary">
+            <td>
+                <table class="table table-striped">
+                {% for x in evento %}
+                    <tr class="table-primary">
+                        <td><a class="link-dark" name="evento" id="evento" href="#" role="button">{{ x.nombre }}</a></td>
+                        <td class="text-end">
+                            <a class="link-primary" id="editar2" href="{% url 'editarEvento' pk=x.id %}" role="button">Editar</a>
+                            <a class="link-danger" id="eliminar2" href="{% url 'eliminarEvento' pk=x.id %}" role="button">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+        </tr>
     </table>
 </div>
 {% endblock %}

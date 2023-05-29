@@ -6,26 +6,40 @@
       <p></p>
 
     <table class="table table-hover">
-        <tr class="table-danger"><td>
+        <tr class="table-info text-center"><td><a class="link-dark" name="agregarZona" id="agregarZona" href="{% url 'agregarZona'  %}" role="button">Agregar una nueva Zona</a></td></tr>
+        <tr class="table-secondary"><td>
         {% for x in zona %}
-            <ul>
-                <li>
-                    <a class="link-dark" name="zona" id="zona" href="#" role="button">{{ x.nombre }}</a>
+            <table class="table table-striped">
+                <tr class="table-primary">
+                    <td><h5 class="text-center">{{ x.nombre }}</h5></td>
+                    <td class="text-end">
+                        <a class="link-primary" id="editar" href="{% url 'editarZona' pk=x.id %}" role="button">Editar</a>
+				        <a class="link-danger" id="eliminar" href="{% url 'eliminarZona' pk=x.id %}" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                    <tr>
+                        <td><p class="text-center">Asientos</p></td>
+                    </tr>
+                    <tr class="table-success text-center"><td><a class="link-dark" name="agregarAsiento" id="agregarAsiento" href="{% url 'agregarAsiento'  %}" role="button">Agregar un nuevo asiento</a></td></tr>
+
                     {% for y in asiento %}
                         {% for z in y %}
                             {% if z.zona.id == x.id %}
-                        <ul>
-                            <li><a class="link-dark" name="asiento" id="asiento" href="#" role="button">{{ z.nombre }}</a></li>
-                        </ul>
+                        <tr>
+                            <td><h6>{{ z.nombre }}</h6></td>
+                            <td>
+                                <a class="link-primary" id="editar2" href="{% url 'editarAsiento' pk=z.id %}" role="button">Editar</a>
+				                <a class="link-danger" id="eliminar2" href="{% url 'eliminarAsiento' pk=z.id %}" role="button">Eliminar</a>
+                            </td>
+                        </tr>
                             {% endif %}
                         {% endfor %}
 
                     {% endfor %}
-                </li>
-            </ul>
+                </tr>
+            </table>
         {% endfor %}
         </td></tr>
-        <tr class="table-info text-center"><td><a class="link-dark" name="agregarZona" id="agregarZona" href="#" role="button">Agregar una nueva Zona</a></td></tr>
     </table>
 </div>
 {% endblock %}
