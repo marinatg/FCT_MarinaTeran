@@ -28,7 +28,7 @@
                 <table class="table table-striped">
                 {% for x in evento %}
                     <tr class="table-primary">
-                        <td><a class="link-dark" name="evento" id="evento" href="#" role="button">{{ x.nombre }}</a></td>
+                        <td><a class="link-dark" name="evento" id="evento" href="{% url 'administrarEvento' pk=x.id %}" role="button">{{ x.nombre }}</a></td>
                         <td class="text-end">
                             <a class="link-primary" id="editar2" href="{% url 'editarEvento' pk=x.id %}" role="button">Editar</a>
                             <a class="link-danger" id="eliminar2" href="{% url 'eliminarEvento' pk=x.id %}" role="button">Eliminar</a>

@@ -31,7 +31,8 @@ class Sala(models.Model):
     aforo = models.IntegerField()
 
     def __str__(self):
-        return str(self.nombre)
+        return 'Id: %s Nombre: %s Mapa: %s Aforo: %s' % (self.id, self.nombre, self.mapa, self.aforo)
+
 
 class Zona(models.Model):
     sala = models.ForeignKey(Sala, on_delete=models.RESTRICT)

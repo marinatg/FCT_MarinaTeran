@@ -1,7 +1,35 @@
-    {% block titulo %}    <h1>Insertar un nuevo evento:</h1>  {% endblock %}
+{% extends 'base.html' %}
 
-    {% block contenido %}
+{% block content %}
+<html>
+    <form enctype="multipart/form-data" method="post">
+     {% csrf_token %}
+     {{ form.as_p }}
+       <p>
+        <label for="id_nombre">Nombre:</label>
+        <input type="text" name="nombre" maxlength="10" required id="id_nombre">
+      </p>
+      <p>
+        <label for="id_imagen">Imagen:</label>
+        <input type="file" name="imagen" accept="image/*" required id="id_imagen">
+      </p>
+      <p>
+        <label for="id_fecha_hora">Fecha-hora:</label>
+        <input type="datetime-local" name="fecha_hora" required id="id_fecha_hora">
+      </p>
+        <p>
+          <label for="id_sala">Sala:</label>
+          <select name="sala" required id="id_sala">
+              <option value="" selected>---------</option>
+                {% for x in sala %}
+                <option value={{x.id}}>{{x.nombre}}</option>
 
-        {% include 'main/form.html' %}
+                {% endfor %}
+          </select>
+        </p>
 
-    {% endblock %}
+        <button class="btn btn-success" name="boton" type="submit">Crear evento</button>
+    </form>
+
+</html>
+{% endblock %}

@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
-from main.forms import UnidadesForm
+from main.forms import UnidadesForm, EventoForm
 from main.models import *
 
 
@@ -361,5 +361,141 @@ class EliminarAsiento(DeleteView):
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
 
+class AdministrarEvento(View):
+    model = Evento
+    template_name = 'PanelAdmin/administrarEvento.html'
 
+    def get(self, request, pk, *args, **kwargs):
+        zona_evento = Zona_evento.objects.filter(evento=pk)
+        asiento_evento = []
+        for i in zona_evento:
+            asiento_zona = Asiento_evento.objects.filter(zona_evento=i.id)
+            asiento_evento.append(asiento_zona)
+        print(len(asiento_evento))
+        return render(request, self.template_name, {'zona_evento': zona_evento, 'asiento_evento': asiento_evento})
 
+class AgregarEvento(View):
+    model = Evento
+    template_name = 'PanelAdmin/agregarEvento.html'
+    form_class= EventoForm
+    def get(self, request, *args, **kwargs):
+        sala = Sala.objects.all()
+        return render(request, self.template_name, {'sala':sala})
+
+    def post(self, request, *args, **kwargs):
+        nombre = request.POST.get("nombre")
+        imagen = request.POST.get("imagen")
+        fecha_hora = request.POST.get("fecha_hora")
+        sala = request.POST.get("sala")
+
+        objSala = Sala.objects.get(id=sala)
+
+        objEvento = Evento.objects.create(nombre=nombre,
+                                         imagen=imagen,
+                                         fecha_hora=fecha_hora,
+                                         disponibles=objSala.aforo,
+                                         sala=objSala)
+
+        objEvento.save()
+
+        evento = Evento.objects.all().last()
+        zona = Zona.objects.filter(sala=sala)
+        for i in zona:
+
+            zona_evento = Zona_evento.objects.create(evento=evento,
+                                                   zona=i,
+                                                   disponibles=i.aforo,
+                                                    precio=0)
+
+            zona_evento.save()
+
+            zona_evento_ultima = Zona_evento.objects.all().last()
+            asiento = Asiento.objects.filter(zona=i.id)
+            for j in asiento:
+
+                asiento_evento = Asiento_evento.objects.create(zona_evento=zona_evento_ultima,
+                                                               asiento=j,
+                                                               estado=False)
+                asiento_evento.save()
+
+        return redirect('asignarPrecioZonaEvento')
+
+"""Necesitamos asignar un precio por zona, en cada evento"""
+class AsignarPrecioZonaEvento(View):
+    model = Zona_evento
+    template_name = 'PanelAdmin/asignarPrecioZonaEvento.html'
+
+    def get(self, request, *args, **kwargs):
+        evento = Evento.objects.all().last()
+        zonaEvento = Zona_evento.objects.filter(evento = evento)
+        return render(request, self.template_name, {'evento':evento, 'zonaEvento':zonaEvento})
+
+    def post(self, request, *args, **kwargs):
+        evento = Evento.objects.all().last()
+        zonaEvento = Zona_evento.objects.filter(evento=evento)
+
+        for i in zonaEvento:
+            precio = request.POST.get(str(i.id))
+            i.precio = precio
+            i.save()
+
+        return redirect('panelAdmin')
+
+class EditarEvento(UpdateView):
+    model = Evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+"""Cambiar para que elimine en cascada"""
+class EliminarEvento(DeleteView):
+    model = Evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class AgregarZonaEvento(CreateView):
+    model = Zona_evento
+    template_name = 'PanelAdmin/agregarZonaEvento.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('panelAdmin')
+
+class EditarZonaEvento(UpdateView):
+    model = Zona_evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarZonaEvento(DeleteView):
+    model = Zona_evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class AgregarAsientoEvento(CreateView):
+    model = Asiento_evento
+    template_name = 'PanelAdmin/agregarAsientoEvento.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('panelAdmin')
+
+class EditarAsientoEvento(UpdateView):
+    model = Asiento_evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')
+
+class EliminarAsientoEvento(DeleteView):
+    model = Asiento_evento
+    fields = '__all__'
+
+    def get_success_url(self, **kwargs):
+        return reverse('panelAdmin')

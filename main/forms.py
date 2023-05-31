@@ -19,3 +19,8 @@ class AsientoForm(forms.ModelForm):
     class Meta:
         model = Asiento
         fields = '__all__'
+
+class EventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields = ['nombre', 'imagen', 'fecha_hora', 'sala']

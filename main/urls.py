@@ -24,6 +24,7 @@ urlpatterns = [
     path('main/eventoDetalle/<int:pk>', views.EventoDetalle.as_view(), name='eventoDetalle'),
     path('PanelAdmin/panelAdmin/', views.PanelAdmin.as_view(), name='panelAdmin'),
     path('PanelAdmin/administrarSala/<int:pk>', views.AdministrarSala.as_view(), name='administrarSala'),
+    path('PanelAdmin/administrarEvento/<int:pk>', views.AdministrarEvento.as_view(), name='administrarEvento'),
     path('PanelAdmin/agregarSala/', views.AgregarSala.as_view(template_name='PanelAdmin/agregarSala.html'), name='agregarSala'),
     path('PanelAdmin/editarSala/<int:pk>', views.EditarSala.as_view(template_name='PanelAdmin/editarSala.html'), name='editarSala'),
     path('PanelAdmin/eliminarSala/<int:pk>', views.EliminarSala.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarSala'),
@@ -36,5 +37,12 @@ urlpatterns = [
     path('PanelAdmin/agregarAsiento/', views.AgregarAsiento.as_view(template_name='PanelAdmin/agregarAsiento.html'), name='agregarAsiento'),
     path('PanelAdmin/editarAsiento/<int:pk>', views.EditarAsiento.as_view(template_name='PanelAdmin/editarAsiento.html'), name='editarAsiento'),
     path('PanelAdmin/eliminarAsiento/<int:pk>', views.EliminarAsiento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarAsiento'),
+    path('PanelAdmin/agregarZonaEvento/', views.AgregarZonaEvento.as_view(template_name='PanelAdmin/agregarZonaEvento.html'), name='agregarZonaEvento'),
+    path('PanelAdmin/editarZonaEvento/<int:pk>', views.EditarZonaEvento.as_view(template_name='PanelAdmin/editarZonaEvento.html'), name='editarZonaEvento'),
+    path('PanelAdmin/eliminarZonaEvento/<int:pk>', views.EliminarZonaEvento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarZonaEvento'),
+    path('PanelAdmin/agregarAsientoEvento/', views.AgregarAsientoEvento.as_view(template_name='PanelAdmin/agregarAsientoEvento.html'), name='agregarAsientoEvento'),
+    path('PanelAdmin/editarAsientoEvento/<int:pk>', views.EditarAsientoEvento.as_view(template_name='PanelAdmin/editarAsientoEvento.html'), name='editarAsientoEvento'),
+    path('PanelAdmin/eliminarAsientoEvento/<int:pk>', views.EliminarAsientoEvento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarAsientoEvento'),
+    path('PanelAdmin/asignarPrecioZonaEvento/', views.AsignarPrecioZonaEvento.as_view(template_name='PanelAdmin/asignarPrecioZonaEvento.html'), name='asignarPrecioZonaEvento'),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

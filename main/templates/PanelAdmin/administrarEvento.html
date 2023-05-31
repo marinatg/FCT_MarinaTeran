@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+<html>
+{% block content %}
+<div class="container-flex align-items-center">
+    <h1 class="text-center">Administrar evento</h1>
+      <p></p>
+
+    <table class="table table-hover">
+        <tr class="table-info text-center"><td>
+            <a class="link-dark" name="agregarZonaEvento" id="agregarZonaEvento" href="{% url 'agregarZonaEvento'  %}" role="button">Agregar una nueva Zona</a>
+        </td></tr>
+        <tr class="table-secondary"><td>
+        {% for x in zona_evento %}
+            <table class="table table-striped">
+                <tr class="table-primary">
+                    <td><h5 class="text-center">{{ x.zona.nombre }}</h5></td>
+                    <td class="text-end">
+                        <a class="link-primary" id="editar" href="{% url 'editarZonaEvento' pk=x.id %}" role="button">Editar</a>
+				        <a class="link-danger" id="eliminar" href="{% url 'eliminarZonaEvento' pk=x.id %}" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                    <tr>
+                        <td><p class="text-center">Asientos</p></td>
+                    </tr>
+
+
+                    {% for y in asiento_evento %}
+                        {% for z in y %}
+                            {% if z.zona_evento.id == x.id %}
+                        <tr>
+                            <td><h6>{{ z.asiento.nombre }}</h6></td>
+                            <td>
+                                <a class="link-primary" id="editar2" href="{% url 'editarAsientoEvento' pk=z.id %}" role="button">Editar</a>
+				                <a class="link-danger" id="eliminar2" href="{% url 'eliminarAsientoEvento' pk=z.id %}" role="button">Eliminar</a>
+                            </td>
+                        </tr>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endfor %}
+                </tr>
+            </table>
+        {% endfor %}
+        </td></tr>
+    </table>
+</div>
+{% endblock %}
+</html>
