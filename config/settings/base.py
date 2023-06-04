@@ -50,6 +50,7 @@ ALLOWED_HOSTS = [
     'http://ec2-52.73.95.158.compute-1.amazonaws.com/',
     'http://3.216.41.255:9001/',
     'http://52.73.95.158:9001',
+    '*',
     # Add any other hostnames you expect to receive requests from
         ]
 

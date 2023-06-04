@@ -174,7 +174,7 @@ class ListadoEventos(TemplateView):
                         else:
                             evento = Evento.objects.filter(disponibles__gt='0')
 
-        return render(request,self.template_name, {'evento':evento, 'busqueda': busqueda, 'disponible': disponible, 'fechaInicio': fechaInicio, 'fechaFin': fechaFin})
+        return render(request, self.template_name, {'evento':evento, 'busqueda': busqueda, 'disponible': disponible, 'fechaInicio': fechaInicio, 'fechaFin': fechaFin})
 
 """EVENTO DETALLE"""
 

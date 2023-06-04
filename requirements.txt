@@ -10,3 +10,7 @@ django-environ
 psycopg2-binary
 #production ready
 # psycopg2
+
+django-wsgi2
+
+mod-wsgi
