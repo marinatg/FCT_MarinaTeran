@@ -164,3 +164,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIR, 'imagenes/') # 'data' is my media folder
+# MEDIA_URL = '/imagenes/'

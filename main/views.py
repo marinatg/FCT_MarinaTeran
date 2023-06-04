@@ -384,12 +384,14 @@ class AgregarEvento(View):
 
     def post(self, request, *args, **kwargs):
         nombre = request.POST.get("nombre")
-        imagen = request.POST.get("imagen")
+        imagen = request.FILES["imagen"]
         fecha_hora = request.POST.get("fecha_hora")
         sala = request.POST.get("sala")
 
         objSala = Sala.objects.get(id=sala)
-
+        print("antes de imagen")
+        print(imagen)
+        print("despues de imagen")
         objEvento = Evento.objects.create(nombre=nombre,
                                          imagen=imagen,
                                          fecha_hora=fecha_hora,
