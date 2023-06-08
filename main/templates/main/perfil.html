@@ -30,19 +30,6 @@
         {% endfor %}
     </table> -->
 
-    <table class="table table-info table-bordered mb-5">
-        <h3 class="text-center">METODOS DE PAGO:</h3>
-        <tr><button style="border: none; background-color: lightgray;"><a class="btn btn-success mb-3" id="insertar1" href="{% url 'agregarMetodoPago' %}" role="button">Añadir Metodo de pago</a></button></tr>
-        {% for x in metodo_pago %}
-        <tr>
-            <td>Metodo de pago: {{ x.metodo_pago }}</td>
-            <td>Nº tarjeta: {{ x.num_tarjeta }}</td>
-
-            <td><button style="border: none; background-color: #caf0f8;"><a class="btn btn-primary" id="editar1" href="{% url 'editarMetodoPago' pk=x.id %}" role="button">Editar</a></button>
-            <button style="border: none; background-color: #caf0f8;"><a class="btn btn-danger" id="eliminar1" href="{% url 'eliminarMetodoPago' pk=x.id %}" role="button">Eliminar</a></button></td>
-        </tr>
-        {% endfor %}
-    </table>
 
 {% endblock %}
 </html>

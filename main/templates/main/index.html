@@ -10,7 +10,9 @@
     <div class="col-3 ">
         <h3 class="col-md-9 text-center">Filtrar por:</h3><br>
         <form method="get">
+            <div class="col-md-9 text-center">
             <input type="text" placeholder="Buscar producto..." name="buscar" style="width: 200px; height: 35px; border-radius: 10px;">
+            </div>
             <p></p>
             <div class="col-md-9 text-center">
             <button class="btn btn-info mb-3" type="submit">Buscar</button>
@@ -19,6 +21,7 @@
 
         <form method="get">
             <h5 class="col-md-9 text-center">Disponibilidad:</h5>
+            <div class="col-md-9 text-center mb-3">
              <input type="radio" id="todos" name="disponibilidad" value="2" {% if not disponible or disponible == '2' %}checked{% endif %}>
             <label for="todos">Todos</label><br>
 
@@ -27,9 +30,9 @@
 
             <input type="radio" id="noDisponibles" name="disponibilidad" value="0" {% if disponible == '0' %}checked{% endif %}>
             <label for="noDisponibles">Sin entradas disponibles</label><br>
+            </div>
 
-
-            <h5 class="col-md-9 text-center mb-2 p-2">Fecha:</h5>
+            <h5 class="col-md-9 text-center mt-3">Fecha:</h5>
             <div class="col-md-9 text-center">
                 <label for="fecha">Desde:</label><br>
                 <input type="date" id="fecha" name="fecha" value="{{ fechaInicio }}">
@@ -39,8 +42,10 @@
                 <label for="fecha2">Hasta:</label><br>
                 <input type="date" id="fecha2" name="fecha2" min="" value="{{ fechaFin }}">
             </div>
-
+            <p></p>
+            <div class="col-md-9 text-center mt-3">
             <button class="btn btn-info mb-3" type="submit">Aplicar filtros</button>
+            </div>
 
             <script>
                 const fechaInput = document.getElementById('fecha');
@@ -65,7 +70,7 @@
                 <h5 class="card-title">{{x.nombre}}</h5>
                 <h6>{{x.fecha_hora}}</h6>
                 <p class="card-text">Quedan {{x.disponibles}} entradas disponibles</p>
-                <a href="#" class="btn btn-info">Comprar entradas</a>
+                <a href="{% url 'eventoDetalle' pk=x.id %}" class="btn btn-info">Comprar entradas</a>
               </div>
             </div>
         {% endfor %}

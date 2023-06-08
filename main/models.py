@@ -13,18 +13,6 @@ class Perfil(models.Model):
     def __str__(self):
         return str(self.nombre)
 
-class Metodo_pago(models.Model):
-    PAGO = (
-        ('T', 'Tarjeta'),
-        ('P', 'Paypal'),
-    )
-    metodo_pago = models.CharField(max_length=7, choices=PAGO)
-    num_tarjeta = models.IntegerField()
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
-
-    def __str__(self):
-        return str(self.metodo_pago)
-
 class Sala(models.Model):
     nombre = models.CharField(max_length=10)
     mapa = models.ImageField(upload_to='main/imagenes/')
@@ -76,3 +64,19 @@ class Asiento_evento(models.Model):
 
     def __str__(self):
         return 'ID: %s Zona: %s Asiento: %s' % (self.id, self.zona_evento, self.asiento)
+
+
+class Compra_total(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, null=True)
+    fecha_hora = models.DateTimeField()
+    zona_evento = models.ForeignKey(Zona_evento, on_delete=models.RESTRICT)
+    total = models.FloatField()
+
+    def __str__(self):
+        return 'ID: %s usuario: %s fecha_hora: %s zona_evento: %s total: %s' % (self.id, self.usuario, self.fecha_hora, self.zona_evento, self.total)
+class Compra_asiento(models.Model):
+    asiento_evento = models.ForeignKey(Asiento_evento, on_delete=models.RESTRICT)
+    compra = models.ForeignKey(Compra_total, on_delete=models.RESTRICT)
+
+    def __str__(self):
+        return 'ID: %s Asiento: %s Compra: %s' % (self.id, self.asiento_evento, self.compra)

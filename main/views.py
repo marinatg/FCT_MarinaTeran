@@ -1,16 +1,24 @@
+from cffi.backend_ctypes import unicode
+from django.apps import AppConfig
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import *
 from django.db import transaction
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
+
 from main.forms import UnidadesForm, EventoForm
 from main.models import *
+
+
+from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
+from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
+import sys
 
 
 # Create your views here.
@@ -73,17 +81,20 @@ class PerfilCliente(TemplateView):
         user = request.user
         num_user = user.id
         perfil = Perfil.objects.filter(usuario_id=num_user)
-        metodo_pago = Metodo_pago.objects.filter(usuario_id=num_user)
         "compras = self.model.objects.filter(perfil_id=perfil[0].id)"
         "pago = Metodo_pago.objects.filter(perfil_id=perfil[0].id)"
 
-        return render(request, self.template_name, {'perfil': perfil, 'metodo_pago': metodo_pago})
+        return render(request, self.template_name, {'perfil': perfil})
 
 class AgregarPerfil(CreateView):
     model = Perfil
     template_name = 'main/agregarPerfil.html'
     fields = '__all__'
 
+    # def get(self, request, *args, **kwargs):
+    #     user = request.user
+    #     num_user = user.id
+    #     return render(request, self.template_name, {'user': user})
     def get_success_url(self):
         return reverse('perfil')
 
@@ -96,27 +107,6 @@ class EditarPerfil(UpdateView):
 
 class EliminarPerfil(DeleteView):
     model = Perfil
-    fields = '__all__'
-    def get_success_url(self, *args, **kwargs):
-        return reverse('perfil')
-
-class AgregarMetodoPago(CreateView):
-    model = Metodo_pago
-    template_name = 'main/agregarMetodoPago.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('perfil')
-
-class EditarMetodoPago(UpdateView):
-    model = Metodo_pago
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('perfil')
-
-class EliminarMetodoPago(DeleteView):
-    model = Metodo_pago
     fields = '__all__'
     def get_success_url(self, *args, **kwargs):
         return reverse('perfil')
@@ -501,3 +491,66 @@ class EliminarAsientoEvento(DeleteView):
 
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
+
+"""PAYPAL"""
+class PaypalConfig(AppConfig):
+    name = 'paypal'
+
+class Paypal(TemplateView):
+    template_name = 'main/paypal.html'
+    def get(self, request):
+        return render(request, self.template_name)
+def pago(request):
+    pass
+class PaypalClient:
+    def __init__(self):
+        self.client_id = "AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD"
+        self.client_secret = "EL88ceYkvO1RSMAKzkRUEHdPU4IJtiIDLe_aBJM1s2m88slXIsfJOJRo2JLdJba7uyKKp1sVV0cWPTrn"
+
+        self.environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
+
+        self.client = PayPalHttpClient(self.environment)
+
+    def object_to_json(self, json_data):
+        result = {}
+        if sys.version_info[0] < 3:
+            itr = json_data.__dict__.iteritems()
+        else:
+            itr = json_data.__dict__.items()
+        for key, value in itr:
+            if key.startswith("__"):
+                continue
+            result[key] = self.array_to_json_array(value) if isinstance(value, list) else\
+                        self.object_to_json(value) if not self.is_primittive(value) else\
+                         value
+        return result
+
+    def array_to_json_array(self, json_array):
+        result = []
+        if isinstance(json_array, list):
+            for item in json_array:
+                result.append(self.object_to_json(item) if not self.isprimittive(item) \
+                              else self.array_to_json_array(item) if isinstance(item, list) else item)
+                return result
+
+    def is_primittive(self, data):
+        return isinstance(data, str) or isinstance(data, unicode) or isinstance(data, int)
+
+
+class GetOrder(PaypalClient):
+    def get_order(self, order_id):
+        request = OrdersGetRequest(order_id)
+        response = self.client.execute(request)
+
+if __name__ == '__main':
+    GetOrder().get_order('REPLACE-WITH-VALID-ORDER-ID')
+
+class CaptureOrder(PaypalClient):
+    def capture_order(self, order_id, debug=False):
+        request = OrdersCaptureRequest(order_id)
+        response = self.client.execute(request)
+
+        return response
+if __name__ == "__main":
+    order_id = ""
+    CaptureOrder().capture_order(order_id, debug=True)

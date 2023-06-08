@@ -18,9 +18,9 @@ urlpatterns = [
     path('main/agregarPerfil/', views.AgregarPerfil.as_view(template_name='main/agregarPerfil.html'), name='agregarPerfil'),
     path('main/editarPerfil/<int:pk>', views.EditarPerfil.as_view(template_name='main/editarPerfil.html'), name='editarPerfil'),
     path('main/eliminarPerfil/<int:pk>', views.EliminarPerfil.as_view(template_name='main/eliminar.html'), name='eliminarPerfil'),
-    path('administrador/agregarMetodoPago/', views.AgregarMetodoPago.as_view(template_name='main/agregarMetodoPago.html'), name='agregarMetodoPago'),
-    path('administrador/editarMetodoPago/<int:pk>', views.EditarMetodoPago.as_view(template_name='main/editarMetodoPago.html'), name='editarMetodoPago'),
-    path('administrador/eliminarMetodoPago/<int:pk>', views.EliminarMetodoPago.as_view(template_name='main/eliminar.html'), name='eliminarMetodoPago'),
+    # path('administrador/agregarMetodoPago/', views.AgregarMetodoPago.as_view(template_name='main/agregarMetodoPago.html'), name='agregarMetodoPago'),
+    # path('administrador/editarMetodoPago/<int:pk>', views.EditarMetodoPago.as_view(template_name='main/editarMetodoPago.html'), name='editarMetodoPago'),
+    # path('administrador/eliminarMetodoPago/<int:pk>', views.EliminarMetodoPago.as_view(template_name='main/eliminar.html'), name='eliminarMetodoPago'),
     path('main/eventoDetalle/<int:pk>', views.EventoDetalle.as_view(), name='eventoDetalle'),
     path('PanelAdmin/panelAdmin/', views.PanelAdmin.as_view(), name='panelAdmin'),
     path('PanelAdmin/administrarSala/<int:pk>', views.AdministrarSala.as_view(), name='administrarSala'),
@@ -44,5 +44,8 @@ urlpatterns = [
     path('PanelAdmin/editarAsientoEvento/<int:pk>', views.EditarAsientoEvento.as_view(template_name='PanelAdmin/editarAsientoEvento.html'), name='editarAsientoEvento'),
     path('PanelAdmin/eliminarAsientoEvento/<int:pk>', views.EliminarAsientoEvento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarAsientoEvento'),
     path('PanelAdmin/asignarPrecioZonaEvento/', views.AsignarPrecioZonaEvento.as_view(template_name='PanelAdmin/asignarPrecioZonaEvento.html'), name='asignarPrecioZonaEvento'),
+    path('main/paypal/', views.Paypal.as_view(template_name='main/paypal.html'), name='paypal'),
+    path('pago/', views.pago, name= 'pago'),
+
 
               ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

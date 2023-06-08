@@ -106,7 +106,7 @@
 
                     <label>Uds: </label>
                     <input type="number" id="unidades" name="unidades" value=0 readonly>
-              <button class="btn btn-success" name="boton" type="submit">Comprar</button>
+              <button href="{% url 'paypal' %}" class="btn btn-success" name="boton" type="submit">Comprar</button>
         </form>
               {% endif %}
             </div>
