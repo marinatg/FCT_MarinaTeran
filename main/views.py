@@ -93,16 +93,27 @@ class AgregarPerfil(CreateView):
     template_name = 'main/agregarPerfil.html'
     fields = '__all__'
 
-    # def get(self, request, *args, **kwargs):
-    #     user = request.user
-    #     num_user = user.id
-    #     return render(request, self.template_name, {'user': user})
+    def post(self, request, *args, **kwargs):
+        nombre = request.POST.get("nombre")
+        dni = request.POST.get("dni")
+        fecha_nac = request.POST.get("fecha_nac")
+        direccion = request.POST.get("direccion")
+        user = request.user
+
+        perfil = Perfil.objects.create(nombre=nombre,
+                                         dni=dni,
+                                         fecha_nac=fecha_nac,
+                                         direccion=direccion,
+                                         usuario=user)
+
+        perfil.save()
+        return redirect('perfil')
     def get_success_url(self):
         return reverse('perfil')
 
 class EditarPerfil(UpdateView):
     model = Perfil
-    fields = '__all__'
+    fields = ['nombre', 'dni', 'fecha_nac', 'direccion']
 
     def get_success_url(self, **kwargs):
         return reverse('perfil')
@@ -203,22 +214,19 @@ class EventoDetalle(View):
             asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
 
         zonaElegida = Zona_evento.objects.get(evento=pk, zona=zonita)
-
         unidades = request.GET.get("unidades", "0")
-        print("textito antes " + unidades)
         asientosElegidos = []
+
         if unidades > "0":
-            print("mayor que 0")
-            print(asientos)
+
             for i in asientos:
                 asientoEvento = request.GET.get(str(i.id), "False")
-                print(i.id)
-                print(asientoEvento)
+
                 if asientoEvento != "False":
                     asientosElegidos.append(asientoEvento)
-                    print(asientosElegidos)
-        else:
-            print("cero")
+
+            """variables sesion"""
+            return redirect('paypal')
 
         return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
 
@@ -501,6 +509,7 @@ class PaypalConfig(AppConfig):
 class Paypal(TemplateView):
     template_name = 'main/paypal.html'
     def get(self, request):
+        """recuperar total y pasarla por parametros"""
         return render(request, self.template_name)
 def pago(request):
     """el producto"""
@@ -515,7 +524,7 @@ def pago(request):
     if detalle_precio == entrada.zona_evento.precio:
         trx = CaptureOrder().capture_order(order_id, debug=True)
         pedido = Compra_total(
-            id = "",
+            id = Asiento_evento.objects.get(pk=1),
             usuario = trx.result.payer.name.given_name,
             fecha_hora = date.today(),
             zona_evento = "",
@@ -523,7 +532,7 @@ def pago(request):
         )
 
         asiento_comprado = Compra_asiento(
-            id = Asiento_evento.objects.get(pk=1),
+            id = "",
             asiento_evento = Asiento_evento.objects.get(pk=1),
             compra = pedido.id
         )
@@ -585,8 +594,8 @@ class GetOrder(PaypalClient):
         request = OrdersGetRequest(order_id)
         response = self.client.execute(request)
 
-if __name__ == '__main':
-    GetOrder().get_order('REPLACE-WITH-VALID-ORDER-ID')
+# if __name__ == '__main':
+#     GetOrder().get_order('REPLACE-WITH-VALID-ORDER-ID')
 
 class CaptureOrder(PaypalClient):
     def capture_order(self, order_id, debug=False):

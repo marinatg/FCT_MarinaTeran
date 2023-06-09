@@ -1,14 +1,76 @@
+
+
 <html>
 
-    <body>
-
-    {% block titulo %}    <h1>Insertar un nuevo perfil:</h1>  {% endblock %}
-
     {% block contenido %}
+    <style>
+        form {
+  min-width:300px;
+  max-width:400px;
+  padding:20px;
+  margin:0 auto;
+  background:#ffffff59;
+  -webkit-box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
+  -moz-box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
+  box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
+}
 
-        {% include 'main/form.html' %}
+form input {
+  border:1px solid #eee;
+  border-radius:0 !important;
+  padding:5px 8px;
+  color:#444;
+}
 
+form button {
+  color:#555;
+  background:#ffffffad;
+  border:1px solid #fff !important;
+  margin-top:20px;
+  border-radius:0px Important;
+}
+
+form button:hover {
+  background:#fff !important;
+}
+
+.pull-right {
+  float:right;
+}
+body {
+  background: #70e1f5;
+  background: -webkit-linear-gradient(to right, #ffd194, #70e1f5);
+  background: linear-gradient(to right, #ffd194, #70e1f5);
+}
+    </style>
+ <body>
+       <div class="container">
+  <form METHOD="post">
+     {% csrf_token %}
+
+     <div class="form-group">
+      <label for="nombre">Nombre :</label>
+      <input type="text" class="form-control" name="nombre">
+    </div>
+    <div class="form-group">
+      <label for="dni">Dni :</label>
+      <input type="text" class="form-control" name="dni">
+    </div>
+    <div class="form-group">
+      <label for="fecha_nac">Fecha de nacimiento :</label>
+      <input type="date" class="form-control" name="fecha_nac">
+    </div>
+    <div class="form-group">
+      <label for="direccion">Direccion :</label>
+      <input type="text" class="form-control" name="direccion">
+    </div>
+
+      <button type="reset" class="btn">Reset</button>
+      <button type="submit" class="btn" style="float:right">Submit</button>
+     </form>
+</div>
+</body>
     {% endblock %}
-    </body>
+
 
 </html>
