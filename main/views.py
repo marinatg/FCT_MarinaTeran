@@ -1,3 +1,5 @@
+from datetime import date
+
 from cffi.backend_ctypes import unicode
 from django.apps import AppConfig
 from django.contrib.auth import authenticate, login, logout
@@ -18,7 +20,7 @@ from main.models import *
 
 from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
-import sys
+import sys, json
 
 
 # Create your views here.
@@ -501,7 +503,48 @@ class Paypal(TemplateView):
     def get(self, request):
         return render(request, self.template_name)
 def pago(request):
-    pass
+    """el producto"""
+    entrada = Asiento_evento.objects.get(pk=1)
+    data = json.loads(request.body)
+    order_id = data('orderID')
+
+    detalle = GetOrder().get_order(order_id)
+    detalle_precio = float(detalle.result.purchase_units[0].amount.value)
+    print(detalle_precio)
+
+    if detalle_precio == entrada.zona_evento.precio:
+        trx = CaptureOrder().capture_order(order_id, debug=True)
+        pedido = Compra_total(
+            id = "",
+            usuario = trx.result.payer.name.given_name,
+            fecha_hora = date.today(),
+            zona_evento = "",
+            total = trx.result.purchase_units[0].payments.captures[0].amount.value
+        )
+
+        asiento_comprado = Compra_asiento(
+            id = Asiento_evento.objects.get(pk=1),
+            asiento_evento = Asiento_evento.objects.get(pk=1),
+            compra = pedido.id
+        )
+        pedido.save()
+        asiento_comprado.save()
+
+        data = {
+            "id": f"{trx.result.id}",
+            "nombre_cliente": f"{trx.result.payer.name.given_name}",
+            "mensaje": "=D"
+        }
+
+        return JsonResponse(data)
+
+    else:
+        data = {
+            "nombre_cliente": "Error =("
+        }
+
+        return JsonResponse(data)
+
 class PaypalClient:
     def __init__(self):
         self.client_id = "AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD"
@@ -551,6 +594,6 @@ class CaptureOrder(PaypalClient):
         response = self.client.execute(request)
 
         return response
-if __name__ == "__main":
-    order_id = ""
-    CaptureOrder().capture_order(order_id, debug=True)
+# if __name__ == "__main":
+#     order_id = ""
+#     CaptureOrder().capture_order(order_id, debug=True)

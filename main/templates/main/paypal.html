@@ -57,7 +57,7 @@
               }). then(function(res) {
                 return res.json();
               }).then(function(details) {
-                alert('Transaction approved by ' + details.payer_given_name);
+                alert(details.mensaje);
               })
             }
         }).render('#paypal-button-container');

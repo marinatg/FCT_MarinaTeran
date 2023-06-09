@@ -21,9 +21,11 @@
                     console.log("dentro del if");
                     uds = parseInt(uds) + 1;
                     unidades.value = parseInt(uds);
+                    imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/sillaSeleccionada.png");
                 }else {
                     uds = uds - 1;
                     unidades.value = uds;
+                    imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/silla.png");
                 }
             });
         }
@@ -74,8 +76,10 @@
                     <td>
                     {% if a.estado == False %}
                     <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}">
+                        <img src="/main/imagenes/silla.png" width="50" height="50" />
                     {% else %}
                      <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}" disabled>
+                    <img src="/main/imagenes/deshabilitada.png" width="50" height="50" />
                     {% endif %}
                     <label for="{{a.id}}">{{ a.asiento.nombre }}</label>
                     </td>
