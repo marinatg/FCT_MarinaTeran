@@ -1,7 +1,6 @@
 from datetime import date
 
 from cffi.backend_ctypes import unicode
-from django.apps import AppConfig
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import *
@@ -13,7 +12,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
-
+from main.apps import PaypalConfig
 from main.forms import UnidadesForm, EventoForm
 from main.models import *
 
@@ -464,8 +463,22 @@ class EliminarEvento(DeleteView):
     model = Evento
     fields = '__all__'
 
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
+    def post(self, request, *args, **kwargs):
+        print("MAldita sea")
+        for key, value in kwargs.items():
+            idEvento = value
+            print(idEvento)
+        evento = Evento.objects.get(id=idEvento)
+        r_zonas = Zona_evento.objects.filter(evento=evento.id)
+        for z in r_zonas:
+            zonas = Zona_evento.objects.get(id=z.id)
+            r_asientos = Asiento_evento.objects.filter(zona_evento=zonas.id)
+            for a in r_asientos:
+                asientos = Asiento_evento.objects.get(id=a.id)
+                asientos.delete()
+            zonas.delete()
+        evento.delete()
+        return redirect('panelAdmin')
 
 class AgregarZonaEvento(CreateView):
     model = Zona_evento
@@ -512,8 +525,7 @@ class EliminarAsientoEvento(DeleteView):
         return reverse('panelAdmin')
 
 """PAYPAL"""
-class PaypalConfig(AppConfig):
-    name = 'paypal'
+
 
 class Paypal(TemplateView):
     template_name = 'main/paypal.html'
