@@ -21,9 +21,18 @@ from main.models import *
 from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 import sys, json
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from django.template.loader import render_to_string
+from django.views import View
+
+
+
 
 
 # Create your views here.
+
+
 
 
 """REGISTRO, LOGIN Y LOGOUT"""

@@ -45,4 +45,5 @@ urlpatterns = [
     path('pago/', views.pago, name= 'pago'),
 
 
+
               ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,54 +1,79 @@
 
 
-<html>
-
-    {% block contenido %}
-    <style>
-        form {
-  min-width:300px;
-  max-width:400px;
-  padding:20px;
-  margin:0 auto;
-  background:#ffffff59;
-  -webkit-box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
-  -moz-box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
-  box-shadow: 3px 3px 23px -9px rgba(0,0,0,0.86);
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .hm-gradient {
+    background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
 }
-
-form input {
-  border:1px solid #eee;
-  border-radius:0 !important;
-  padding:5px 8px;
-  color:#444;
+.darken-grey-text {
+    color: #2E2E2E;
 }
-
-form button {
-  color:#555;
-  background:#ffffffad;
-  border:1px solid #fff !important;
-  margin-top:20px;
-  border-radius:0px Important;
+.danger-text {
+    color: #ff3547; }
+.default-text {
+    color: #2BBBAD;
 }
-
-form button:hover {
-  background:#fff !important;
+.info-text {
+    color: #33b5e5;
 }
-
-.pull-right {
-  float:right;
+.form-white .md-form label {
+  color: #fff;
 }
-body {
-  background: #70e1f5;
-  background: -webkit-linear-gradient(to right, #ffd194, #70e1f5);
-  background: linear-gradient(to right, #ffd194, #70e1f5);
+.form-white input[type=text]:focus:not([readonly]) {
+    border-bottom: 1px solid #fff;
+    -webkit-box-shadow: 0 1px 0 0 #fff;
+    box-shadow: 0 1px 0 0 #fff;
 }
-    </style>
- <body>
-       <div class="container">
-  <form METHOD="post">
-     {% csrf_token %}
-
-     <div class="form-group">
+.form-white input[type=text]:focus:not([readonly]) + label {
+    color: #fff;
+}
+.form-white input[type=password]:focus:not([readonly]) {
+    border-bottom: 1px solid #fff;
+    -webkit-box-shadow: 0 1px 0 0 #fff;
+    box-shadow: 0 1px 0 0 #fff;
+}
+.form-white input[type=password]:focus:not([readonly]) + label {
+    color: #fff;
+}
+.form-white input[type=password], .form-white input[type=text] {
+    border-bottom: 1px solid #fff;
+}
+.form-white .form-control:focus {
+    color: #fff;
+}
+.form-white .form-control {
+    color: #fff;
+}
+.form-white textarea.md-textarea:focus:not([readonly]) {
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 1px 0 0 #fff;
+    color: #fff;
+}
+.form-white textarea.md-textarea  {
+    border-bottom: 1px solid #fff;
+    color: #fff;
+}
+.form-white textarea.md-textarea:focus:not([readonly])+label {
+    color: #fff;
+}
+.ripe-malinka-gradient {
+    background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+}
+.near-moon-gradient {
+    background-image: linear-gradient(to bottom, #5ee7df 0%, #b490ca 100%);
+}
+</style>
+ <div class="row offset-3 col-12">
+                <!-- Grid column -->
+                <div class="col-md-6 mb-4">
+                    <div class="card near-moon-gradient form-white">
+                        <div class="card-body">
+                            <!-- Form subscription -->
+                            <form enctype="multipart/form-data" method="post">
+                                {% csrf_token %}
+                                <h3 class="text-center indigo-text font-bold py-4"><strong>Añadr datos</strong></h3>
+                                         <div class="form-group">
       <label for="nombre">Nombre :</label>
       <input type="text" class="form-control" name="nombre">
     </div>
@@ -64,13 +89,13 @@ body {
       <label for="direccion">Direccion :</label>
       <input type="text" class="form-control" name="direccion">
     </div>
+                                <div class="text-center py-4">
+                                    <button class="btn btn-indigo"><input type="submit" value="CONFIRMAR"> <i class="fa fa-paper-plane-o ml-1"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+ </div>
+{% endblock %}
 
-      <button type="reset" class="btn">Reset</button>
-      <button type="submit" class="btn" style="float:right">Submit</button>
-     </form>
-</div>
-</body>
-    {% endblock %}
-
-
-</html>
