@@ -17,17 +17,29 @@
     console.log(arrayAsientos);
     var unidades = document.getElementById("unidades");
     var uds = unidades.value;
+    var price = document.getElementById("precio_entrada");
+    var prc = document.getElementById("precio");
+    console.log(price.value);
+    var precioSt= price.value;
+    var precioSt2 = precioSt.replace(',', '.');
+    var precioFl = parseFloat(precioSt2);
+    console.log(precioFl);
+    console.log(prc);
 
     for (var i = 0; i < arrayAsientos.length; i++) {
       arrayAsientos[i].addEventListener('change', function() {
         if (this.checked) {
           console.log("dentro del if");
           uds = parseInt(uds) + 1;
+          var prcFl = parseFloat(prc.value);
+          prc.value = (prcFl +  precioFl).toFixed(2);
           unidades.value = parseInt(uds);
           imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/sillaSeleccionada.png");
         } else {
           uds = uds - 1;
           unidades.value = uds;
+          var prcFl = parseFloat(prc.value);
+          prc.value = (prcFl -  precioFl).toFixed(2);
           imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/silla.png");
         }
       });
@@ -39,9 +51,10 @@
     for (var j = 0; j < arrayImagenes.length; j++) {
       arrayImagenes[j].onclick = function() {
         var checkbox = this.previousElementSibling;
-        checkbox.checked = !checkbox.checked; // Cambiar el estado de la casilla
-        checkbox.dispatchEvent(new Event('change')); // Disparar el evento change manualmente
-        // Agrega aquí cualquier otra lógica que deseas ejecutar al hacer clic en la imagen
+        if (!checkbox.disabled) {
+            checkbox.checked = !checkbox.checked; // Cambiar el estado de la casilla
+            checkbox.dispatchEvent(new Event('change')); // Disparar el evento change manualmente
+        }
       };
     }
   });
@@ -81,7 +94,7 @@
 
 
 
-        <div style="border: 1px solid purple;">
+        <div>
         <form  enctype="multipart/form-data" method="get">
 
             {% csrf_token %}
@@ -99,7 +112,7 @@
                     <img src="/main/imagenes/deshabilitada.png" width="50" height="50" />
                     {% endif %}
                         <br/>
-                    <label class="m-2" for="{{a.id}}">{{ a.asiento.nombre }}</label>
+                    <label class=" m-2" for="{{a.id}}">{{ a.asiento.nombre }}</label>
                     </td>
                 {% if forloop.counter|divisibleby:4 %}
                 </tr>
@@ -124,10 +137,15 @@
               {% if evento.disponibles == 0 %}
                 <p class="alert alert-danger">Entradas no disponibles</p>
               {% else %}
-                <p>Entradas disponibles: {{ zonaElegida.disponibles }} uds.</p>
+                <p><b>Entradas disponibles:</b> {{ zonaElegida.disponibles }} uds.</p>
 
-                    <label>Uds: </label>
-                    <input type="number" id="unidades" name="unidades" value=0 readonly>
+                    <label style="font-weight: bold;">Uds: </label>
+                    <input style="background-color: transparent; border: none;" type="number" id="unidades" name="unidades" value=0 readonly><br/>
+                    <label style="font-weight: bold;">Entrada(€): </label>
+                    <input style="background-color: transparent; border: none;" type="text" id="precio_entrada" name="precio_entrada" value="{{zonaElegida.precio}}"  readonly ><br/>
+                    <label style="font-weight: bold;">Total(€): </label>
+                    <input style="background-color: transparent; border: none;" type="text" id="precio" name="precio" value=0 step="any" readonly >
+                    <p></p>
               <button href="{% url 'paypal' %}" class="btn btn-success" name="boton" type="submit">Comprar</button>
         </form>
               {% endif %}
