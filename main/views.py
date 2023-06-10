@@ -4,6 +4,7 @@ from cffi.backend_ctypes import unicode
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import *
+from django.contrib.sessions import serializers
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
@@ -18,6 +19,13 @@ from main.apps import PaypalConfig
 from main.forms import UnidadesForm, EventoForm
 from main.models import *
 
+from django.db import transaction
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import *
+from django.contrib.auth import login, logout, authenticate
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+from django.core.serializers import serialize
 
 from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
@@ -244,31 +252,26 @@ class EventoDetalle(View):
             if "asientos_elegidos" in request.session:
                 print(request.session["asientos_elegidos"])
                 del request.session['asientos_elegidos']
-            if "unidades" in request.session:
-                print(request.session["unidades"])
-                del request.session['unidades']
-            if "precio_entrada" in request.session:
-                print(request.session["precio_entrada"])
-                del request.session['precio_entrada']
-            if "precio_total" in request.session:
-                print(request.session["precio_total"])
-                del request.session['precio_total']
+            if "datosCompra" in request.session:
+                print(request.session["datosCompra"])
+                del request.session['datosCompra']
+
 
             unidades = int(request.GET.get("unidades"))
             precio_entrada = float(request.GET.get("precio_entrada"))
             precio_total = float(request.GET.get("precio"))
 
+            data = {
+                'unidades': unidades,
+                'precio_entrada': precio_entrada,
+                'precio_total': precio_total
+            }
+            json_data = json.dumps(data, cls=CustomEncoder)
+
             data = serialize('json', asientosElegidos, cls=LazyEncoder)
             request.session['asientos_elegidos'] = data
 
-            data = serialize('json', unidades, cls=CustomEncoder)
-            request.session['unidades'] = data
-
-            data = serialize('json', precio_entrada, cls=CustomEncoder)
-            request.session['precio_entrada'] = data
-
-            data = serialize('json', precio_total, cls=CustomEncoder)
-            request.session['precio_total'] = data
+            request.session['datosCompra'] = json_data
 
             request.session.save()
 
@@ -278,8 +281,8 @@ class EventoDetalle(View):
             del request.session['productos_carro']"""
 
             """Comprbar que existe variable de sesion 
-            if 'productos_carro' in request.session:
-                items = request.session['productos_carro']
+            if 'datosCompra' in request.session:
+                items = request.session['datosCompra']
 
                 for obj in serializers.deserialize('json', items):
                     listaItems.append(obj.object)
@@ -295,28 +298,6 @@ class EventoDetalle(View):
             return redirect('paypal')
 
         return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
-
-    # @transaction.atomic
-    # def post(self, request, pk, *args, **kwargs):
-    #     formulario = self.form_class(request.POST)
-    #     if formulario.is_valid():
-    #     #     contexto = {}
-    #     #     contexto['evento'] = Evento.objects.get(id=pk)
-    #     #     user = request.user
-    #     #     num_user = user.id
-    #     #     contexto['perfil'] = Perfil.objects.filter(
-    #     #         Q(usuario_id=num_user)
-    #     #     ).distinct()
-    #         #asientoElegido = formulario.cleaned_data['21', False]
-    #         asientoElegido = request.POST.get("21", False)
-    #         #unidades = request.POST.get("unidades")
-    #         unidades = formulario.cleaned_data['unidades']
-    #         print(asientoElegido)
-    #         print(unidades)
-    #         print(formulario)
-    #
-    #     return render(request, self.template_name)
-
 
 """Panel de administración"""
 class PanelAdmin(TemplateView):
@@ -582,7 +563,15 @@ class Paypal(TemplateView):
     template_name = 'main/paypal.html'
     def get(self, request):
         """recuperar total y pasarla por parametros"""
-        return render(request, self.template_name)
+        if 'datosCompra' in request.session:
+            entradas = request.session['datosCompra']
+
+            print('entradas')
+            print(entradas)
+            data = json.loads(entradas)
+            total = data['precio_total']
+
+        return render(request, self.template_name, {'total': total})
 def pago(request):
     """el producto"""
     entrada = Asiento_evento.objects.get(pk=1)

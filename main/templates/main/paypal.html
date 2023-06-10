@@ -29,17 +29,22 @@
     <div id="paypal-button-container">
 
     </div>
+    <div id="total" data-total="{{ total }}" style="display: none;"></div>
     <script
             src="https://www.paypal.com/sdk/js?client-id=AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD">
     </script>
 
     <script>
+        var precio_total = document.getElementById('total').dataset.total;
+        var precio_total_str = String(precio_total);
+        var total_str = precio_total_str.replace(',', '.');
         paypal.Buttons({
             createOrder: function(date, actions) {
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: '25.00'
+                            currency_code: 'USD',
+                            value: total_str
                         }
                     }]
                 });
@@ -48,17 +53,17 @@
               return fetch('/pago/', {
               method: 'POST',
                 headers: {
-                    'content-type': 'application/json'
+                    'content-type': 'application/json',
                     'X-CSRFToken': csrftoken,
                 },
-                body: JSON.stringfly({
+                body: JSON.stringify({
                 orderID: data.orderID
                 })
-              }). then(function(res) {
+              }).then(function(res) {
                 return res.json();
               }).then(function(details) {
                 alert(details.mensaje);
-              })
+              });
             }
         }).render('#paypal-button-container');
     </script>
