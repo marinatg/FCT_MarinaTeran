@@ -4,33 +4,50 @@
 <html>
 {% block content %}
 <head>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script>
-      document.addEventListener("DOMContentLoaded", function() {
-      console.log("dentro de la funcion");
-        var asientos = document.getElementById("asientosDisponibles");
-        console.log(asientos);
-        var arrayAsientos = asientos.getElementsByTagName("input");
-        console.log(arrayAsientos);
-        var unidades = document.getElementById("unidades");
-        var uds = unidades.value;
+<style>
+  #asientosDisponibles input[type='checkbox'] {
+    display: none;
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    console.log("dentro de la funcion");
+    var arrayAsientos = document.querySelectorAll("#asientosDisponibles input[type='checkbox']");
+    console.log(arrayAsientos);
+    var unidades = document.getElementById("unidades");
+    var uds = unidades.value;
 
-        for(var i = 0; i < arrayAsientos.length; i++){
-           arrayAsientos[i].addEventListener('change', function(){
-                if (this.checked) {
-                    console.log("dentro del if");
-                    uds = parseInt(uds) + 1;
-                    unidades.value = parseInt(uds);
-                    imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/sillaSeleccionada.png");
-                }else {
-                    uds = uds - 1;
-                    unidades.value = uds;
-                    imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/silla.png");
-                }
-            });
+    for (var i = 0; i < arrayAsientos.length; i++) {
+      arrayAsientos[i].addEventListener('change', function() {
+        if (this.checked) {
+          console.log("dentro del if");
+          uds = parseInt(uds) + 1;
+          unidades.value = parseInt(uds);
+          imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/sillaSeleccionada.png");
+        } else {
+          uds = uds - 1;
+          unidades.value = uds;
+          imagen = this.nextElementSibling.setAttribute("src", "/main/imagenes/silla.png");
         }
       });
-  </script>
+    }
+
+    var arrayImagenes = document.querySelectorAll("#asientosDisponibles img");
+    console.log(arrayImagenes);
+
+    for (var j = 0; j < arrayImagenes.length; j++) {
+      arrayImagenes[j].onclick = function() {
+        var checkbox = this.previousElementSibling;
+        checkbox.checked = !checkbox.checked; // Cambiar el estado de la casilla
+        checkbox.dispatchEvent(new Event('change')); // Disparar el evento change manualmente
+        // Agrega aquí cualquier otra lógica que deseas ejecutar al hacer clic en la imagen
+      };
+    }
+  });
+</script>
+
+
 </head>
 <body>
 <div class="container">
@@ -81,7 +98,8 @@
                      <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}" disabled>
                     <img src="/main/imagenes/deshabilitada.png" width="50" height="50" />
                     {% endif %}
-                    <label for="{{a.id}}">{{ a.asiento.nombre }}</label>
+                        <br/>
+                    <label class="m-2" for="{{a.id}}">{{ a.asiento.nombre }}</label>
                     </td>
                 {% if forloop.counter|divisibleby:4 %}
                 </tr>
