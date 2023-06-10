@@ -19,12 +19,10 @@
     var uds = unidades.value;
     var price = document.getElementById("precio_entrada");
     var prc = document.getElementById("precio");
-    console.log(price.value);
     var precioSt= price.value;
     var precioSt2 = precioSt.replace(',', '.');
     var precioFl = parseFloat(precioSt2);
-    console.log(precioFl);
-    console.log(prc);
+    price.value = precioSt2;
 
     for (var i = 0; i < arrayAsientos.length; i++) {
       arrayAsientos[i].addEventListener('change', function() {

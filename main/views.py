@@ -4,6 +4,8 @@ from cffi.backend_ctypes import unicode
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import *
+from django.core.serializers import serialize
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
@@ -27,12 +29,18 @@ from django.views import View
 
 
 
-
-
 # Create your views here.
+class LazyEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Asiento_evento):
+            return str(obj)
+        return super().default(obj)
 
-
-
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, int) or isinstance(obj, float):
+            return str(obj)
+        raise TypeError("No se puede serializar el objeto")
 
 """REGISTRO, LOGIN Y LOGOUT"""
 class Registro(CreateView):
@@ -231,9 +239,59 @@ class EventoDetalle(View):
                 asientoEvento = request.GET.get(str(i.id), "False")
 
                 if asientoEvento != "False":
-                    asientosElegidos.append(asientoEvento)
+                    asientosElegidos.append(i)
+
+            if "asientos_elegidos" in request.session:
+                print(request.session["asientos_elegidos"])
+                del request.session['asientos_elegidos']
+            if "unidades" in request.session:
+                print(request.session["unidades"])
+                del request.session['unidades']
+            if "precio_entrada" in request.session:
+                print(request.session["precio_entrada"])
+                del request.session['precio_entrada']
+            if "precio_total" in request.session:
+                print(request.session["precio_total"])
+                del request.session['precio_total']
+
+            unidades = int(request.GET.get("unidades"))
+            precio_entrada = float(request.GET.get("precio_entrada"))
+            precio_total = float(request.GET.get("precio"))
+
+            data = serialize('json', asientosElegidos, cls=LazyEncoder)
+            request.session['asientos_elegidos'] = data
+
+            data = serialize('json', unidades, cls=CustomEncoder)
+            request.session['unidades'] = data
+
+            data = serialize('json', precio_entrada, cls=CustomEncoder)
+            request.session['precio_entrada'] = data
+
+            data = serialize('json', precio_total, cls=CustomEncoder)
+            request.session['precio_total'] = data
+
+            request.session.save()
+
 
             """variables sesion"""
+            """Eliminar sesion 
+            del request.session['productos_carro']"""
+
+            """Comprbar que existe variable de sesion 
+            if 'productos_carro' in request.session:
+                items = request.session['productos_carro']
+
+                for obj in serializers.deserialize('json', items):
+                    listaItems.append(obj.object)
+            """
+
+            """Dar de alta variable de sesion
+            listaItems.append(itemCompra)
+            data = serialize('json', listaItems, cls=LazyEncoder)
+            request.session['productos_carro'] = data
+            request.session.save()
+            """
+
             return redirect('paypal')
 
         return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
@@ -280,7 +338,6 @@ class AdministrarSala(View):
         for i in zona:
             asiento_zona = Asiento.objects.filter(zona=i.id)
             asiento.append(asiento_zona)
-        print(len(asiento))
         return render(request, self.template_name, {'zona': zona, 'asiento': asiento})
 
 class AgregarSala(CreateView):
@@ -379,7 +436,6 @@ class AdministrarEvento(View):
         for i in zona_evento:
             asiento_zona = Asiento_evento.objects.filter(zona_evento=i.id)
             asiento_evento.append(asiento_zona)
-        print(len(asiento_evento))
         return render(request, self.template_name, {'zona_evento': zona_evento, 'asiento_evento': asiento_evento})
 
 class AgregarEvento(View):
@@ -397,9 +453,6 @@ class AgregarEvento(View):
         sala = request.POST.get("sala")
 
         objSala = Sala.objects.get(id=sala)
-        print("antes de imagen")
-        print(imagen)
-        print("despues de imagen")
         objEvento = Evento.objects.create(nombre=nombre,
                                          imagen=imagen,
                                          fecha_hora=fecha_hora,
@@ -430,7 +483,6 @@ class AgregarEvento(View):
 
         return redirect('asignarPrecioZonaEvento')
 
-"""Necesitamos asignar un precio por zona, en cada evento"""
 class AsignarPrecioZonaEvento(View):
     model = Zona_evento
     template_name = 'PanelAdmin/asignarPrecioZonaEvento.html'
@@ -458,7 +510,6 @@ class EditarEvento(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
 
-"""Cambiar para que elimine en cascada"""
 class EliminarEvento(DeleteView):
     model = Evento
     fields = '__all__'
