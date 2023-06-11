@@ -134,10 +134,20 @@ class PerfilCliente(TemplateView):
         user = request.user
         num_user = user.id
         perfil = Perfil.objects.filter(usuario_id=num_user)
-        "compras = self.model.objects.filter(perfil_id=perfil[0].id)"
-        "pago = Metodo_pago.objects.filter(perfil_id=perfil[0].id)"
 
-        return render(request, self.template_name, {'perfil': perfil})
+        compras = Compra_total.objects.filter(usuario=num_user)
+
+        return render(request, self.template_name, {'perfil': perfil, 'compras': compras})
+
+class CompraDetalle(TemplateView):
+    template_name = 'main/resumenCompra.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        ultimo_pedido = Compra_total.objects.get(id=pk)
+        asientos = Compra_asiento.objects.filter(compra=ultimo_pedido.id)
+
+        return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
+
 
 class AgregarPerfil(CreateView):
     model = Perfil
@@ -315,24 +325,6 @@ class EventoDetalle(View):
             request.session.save()
 
             print(asientosElegidos)
-            """variables sesion"""
-            """Eliminar sesion 
-            del request.session['productos_carro']"""
-
-            """Comprbar que existe variable de sesion 
-            if 'datosCompra' in request.session:
-                items = request.session['datosCompra']
-
-                for obj in serializers.deserialize('json', items):
-                    listaItems.append(obj.object)
-            """
-
-            """Dar de alta variable de sesion
-            listaItems.append(itemCompra)
-            data = serialize('json', listaItems, cls=LazyEncoder)
-            request.session['productos_carro'] = data
-            request.session.save()
-            """
 
             return redirect('paypal')
 
@@ -707,7 +699,7 @@ class ResumenCompra(TemplateView):
     template_name = 'main/resumenCompra.html'
     def get(self, request):
         print('Dentro de ResumenCompra')
-        ultimo_pedido = Compra_total.objects.all().last()
+        ultimo_pedido = Compra_total.objects.filter(usuario=request.user).last()
         asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id)
         print(ultimo_pedido)
         print(asientos)

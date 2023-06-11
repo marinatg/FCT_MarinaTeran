@@ -7,6 +7,8 @@
 
   <div class="row align-items-start">
       <h1>Resumen de la compra</h1>
+        <!-- Agrega un enlace para descargar el PDF -->
+        <a href="{% url 'generar_pdf' %}?evento_id={{ evento.id }}">Generar PDF</a>
     <div class="row">
     <p></p>
     <div class="col rounded float-start m-5">

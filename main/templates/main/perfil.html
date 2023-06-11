@@ -13,23 +13,22 @@
             <td>Dni: {{ z.dni }}</td>
             <td>Direccion: {{ z.direccion }}</td>
 
-            <td><button style="border: none; background-color: #caf0f8;"><a class="btn btn-primary" id="editar" href="{% url 'editarPerfil' pk=z.id %}" role="button">Editar</a></button>
+            <td ><button style="border: none; background-color: #caf0f8;"><a class="btn btn-primary" id="editar" href="{% url 'editarPerfil' pk=z.id %}" role="button">Editar</a></button>
             <button style="border: none; background-color: #caf0f8;"><a class="btn btn-danger" id="eliminar" href="{% url 'eliminarPerfil' pk=z.id %}" role="button">Eliminar</a></button></td>
         </tr>
         {% endfor %}
     </table>
-
-    <!--<table class="table table-info table-bordered mb-5">
-        <h3 class="text-center">MIS COMPRAS:</h3>
-        {% for x in compras %}
+    <h3  class="text-center">MIS COMPRAS </h3>
+    <table class="table table-info table-bordered mb-5">
+         {% for c in compras %}
         <tr>
-            <td>Fecha: {{ x.fecha }}</td>
-            <td>Total: {{ x.total }}</td>
-            <td><button style="border: none;"><a class="btn btn-info" id="compraDetalle" href="{% url 'compraDetalle' pk=x.id %}" role="button">ver detalle</a></button></td>
+            <td>Nombre: {{c.zona_evento.evento.nombre}}</td>
+            <td>Fecha: {{ c.fecha_hora }}</td>
+
+            <td><button class="float-center" style="border: none; background-color: #caf0f8;"><a class="btn btn-info" id="ver" href="{% url 'compraDetalle' pk=c.id %}" role="button">Ver detalle</a></button></td>
         </tr>
         {% endfor %}
-    </table> -->
-
+    </table>
 
 {% endblock %}
 </html>

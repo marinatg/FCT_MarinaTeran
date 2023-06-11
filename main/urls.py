@@ -45,6 +45,7 @@ urlpatterns = [
     path('main/pago/', views.pago, name= 'pago'),
     path('main/generar_pdf/', views.generar_pdf, name='generar_pdf'),
     path('main/resumenCompra/', views.ResumenCompra.as_view(template_name='main/resumenCompra.html'), name='resumenCompra'),
+    path('main/compraDetalle/<int:pk>', views.CompraDetalle.as_view(template_name='main/resumenCompra.html'), name='compraDetalle'),
 
 
 
