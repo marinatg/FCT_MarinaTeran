@@ -10,8 +10,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse, resolve
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
@@ -33,11 +33,38 @@ import sys, json
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from django.template.loader import render_to_string
-from django.views import View
-
+from django.http import HttpResponse
+from django.template.loader import get_template
+from io import BytesIO
 
 
 # Create your views here.
+
+
+
+def generar_pdf(request):
+    # Crear la respuesta HTTP con el PDF adjunto
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="mi_pdf.pdf"'
+
+    # Generar el contenido del PDF
+    buffer = response
+    p = canvas.Canvas(buffer)
+
+    # Añadir contenido al PDF
+    p.setFont('Helvetica', 12)
+    p.drawString(100, 700, "¡Aqui tiene que aparecer el maldito resumen de la compra T_T!")
+
+    # # Añadir imagen al PDF
+    # image_path = '/main/imagenes/silla.png'  # Reemplaza con la ruta de tu imagen en tu proyecto
+    # p.drawImage(image_path, 100, 500, width=200, height=200)
+
+    # Finalizar el PDF
+    p.showPage()
+    p.save()
+
+    return response
+
 class LazyEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Asiento_evento):
@@ -275,7 +302,7 @@ class EventoDetalle(View):
 
             request.session.save()
 
-
+            print(asientosElegidos)
             """variables sesion"""
             """Eliminar sesion 
             del request.session['productos_carro']"""
@@ -566,55 +593,95 @@ class Paypal(TemplateView):
         if 'datosCompra' in request.session:
             entradas = request.session['datosCompra']
 
-            print('entradas')
-            print(entradas)
             data = json.loads(entradas)
             total = data['precio_total']
-
+        print("Antes de render paypal")
         return render(request, self.template_name, {'total': total})
 def pago(request):
-    """el producto"""
-    entrada = Asiento_evento.objects.get(pk=1)
-    data = json.loads(request.body)
-    order_id = data('orderID')
+    print("Dentro de vista pago")
+    print(request)
+    asientoEvento = []
+    if 'asientos_elegidos' in request.session:
+        items = request.session['asientos_elegidos']
+        print("Recupero sesion")
+        for obj in serializers.deserialize('json', items):
+            asientoEvento.append(obj.object)
 
+    if 'datosCompra' in request.session:
+        entradas = request.session['datosCompra']
+        print("Recupero sesion 2")
+        data = json.loads(entradas)
+        unidades = data['unidades']
+        precio_entrada = data['precio_entrada']
+        precio_total = data['precio_total']
+    print("Antes de data")
+    data = json.loads(request.body)
+    print("antes de orderid")
+    print(data)
+    order_id = data['orderID']
+    print("antes de get order")
     detalle = GetOrder().get_order(order_id)
+    print("Despues de get order")
+    print(detalle)
     detalle_precio = float(detalle.result.purchase_units[0].amount.value)
+    print("Dettalle precio:")
     print(detalle_precio)
 
-    if detalle_precio == entrada.zona_evento.precio:
+    user = request.user
+    num_user = user.id
+    usuario = User.objects.get(id = request.user.id)
+
+    if detalle_precio == precio_total:
+        print("Validacion")
         trx = CaptureOrder().capture_order(order_id, debug=True)
-        pedido = Compra_total(
-            id = Asiento_evento.objects.get(pk=1),
-            usuario = trx.result.payer.name.given_name,
+        print(trx)
+        pedido = Compra_total.objects.create(
+            usuario = usuario,
             fecha_hora = date.today(),
-            zona_evento = "",
-            total = trx.result.purchase_units[0].payments.captures[0].amount.value
+            zona_evento = asientoEvento[0].zona_evento,
+            total = precio_total
         )
-
-        asiento_comprado = Compra_asiento(
-            id = "",
-            asiento_evento = Asiento_evento.objects.get(pk=1),
-            compra = pedido.id
-        )
+        print("pedido")
+        print(pedido)
         pedido.save()
-        asiento_comprado.save()
+        print("Pedido guardado")
+        print(pedido)
+        ultimo_pedido = Compra_total.objects.all().last()
+        for a in asientoEvento:
+            asiento_comprado = Compra_asiento.objects.create(
+                asiento_evento = a,
+                compra = ultimo_pedido
+            )
 
-        data = {
-            "id": f"{trx.result.id}",
-            "nombre_cliente": f"{trx.result.payer.name.given_name}",
-            "mensaje": "=D"
-        }
-
-        return JsonResponse(data)
+            asiento_comprado.save()
+            print("Asiento comprado")
+            print(asiento_comprado)
+            """Asigno el asiento al usuario y lo inhabilito(ya está comprado)"""
+            asiento_reserva = Asiento_evento.objects.get(id=a.id)
+            asiento_reserva.usuario = num_user
+            asiento_reserva.estado = True
+            asiento_reserva.save()
+            print("Asiento evento modificado")
+            print(asiento_reserva)
+        return redirect('resumen_compra')
 
     else:
         data = {
-            "nombre_cliente": "Error =("
+            "mensaje": "Error en la compra"
         }
+        print("El error")
 
         return JsonResponse(data)
 
+class ResumenCompra(View):
+    model = Compra_total
+    template_name = '/main/resumen_compra.html'
+
+    def get(self, request, *args, **kwargs):
+        ultimo_pedido = Compra_total.objects.all().last()
+        asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id)
+        print("Dentro de resumen compra")
+        return render(request, self.template_name, {'ultimo-pedido': ultimo_pedido, 'asientos': asientos})
 class PaypalClient:
     def __init__(self):
         self.client_id = "AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD"
@@ -654,7 +721,7 @@ class GetOrder(PaypalClient):
     def get_order(self, order_id):
         request = OrdersGetRequest(order_id)
         response = self.client.execute(request)
-
+        return response
 # if __name__ == '__main':
 #     GetOrder().get_order('REPLACE-WITH-VALID-ORDER-ID')
 

@@ -42,8 +42,10 @@ urlpatterns = [
     path('PanelAdmin/eliminarAsientoEvento/<int:pk>', views.EliminarAsientoEvento.as_view(template_name='PanelAdmin/eliminar.html'), name='eliminarAsientoEvento'),
     path('PanelAdmin/asignarPrecioZonaEvento/', views.AsignarPrecioZonaEvento.as_view(template_name='PanelAdmin/asignarPrecioZonaEvento.html'), name='asignarPrecioZonaEvento'),
     path('main/paypal/', views.Paypal.as_view(template_name='main/paypal.html'), name='paypal'),
-    path('pago/', views.pago, name= 'pago'),
+    path('main/pago/', views.pago, name= 'pago'),
+    path('generar_pdf/', views.generar_pdf, name='generar_pdf'),
+    path('resumen_compra/', views.ResumenCompra.as_view(template_name='main/resumen_compra.html'), name='resumen_compra'),
 
 
 
-              ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
