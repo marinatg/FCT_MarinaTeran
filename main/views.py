@@ -248,17 +248,23 @@ class EventoDetalle(View):
 
         zonas = Zona_evento.objects.filter(evento=pk)
         zonita = zona
-
+        asientos = []
         if zonita:
             if zonita == '1':
                 zonita = 1
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
+                print('asientos1')
+                print(asientos)
             if zonita == '2':
                 zonita = 2
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[1].id)
+                print('asientos2')
+                print(asientos)
             if zonita == '3':
                 zonita = 3
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[2].id)
+                print('asientos3')
+                print(asientos)
 
         else:
             zonita = 1
@@ -270,6 +276,12 @@ class EventoDetalle(View):
 
         if unidades > "0":
 
+            zona = request.GET.get("zonita")
+            print('zona')
+            print(zona)
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[int(zona)].id)
+            print('asientos')
+            print(asientos)
             for i in asientos:
                 asientoEvento = request.GET.get(str(i.id), "False")
 
@@ -606,7 +618,8 @@ def pago(request):
         print("Recupero sesion")
         for obj in serializers.deserialize('json', items):
             asientoEvento.append(obj.object)
-
+        print('asientoEvento')
+        print(asientoEvento)
     if 'datosCompra' in request.session:
         entradas = request.session['datosCompra']
         print("Recupero sesion 2")
@@ -677,7 +690,7 @@ def pago(request):
 
 class ResumenCompra(View):
     model = Compra_total
-    template_name = '/main/resumen_compra.html'
+    template_name = 'main/resumen_compra.html'
 
     def get(self, request, *args, **kwargs):
         ultimo_pedido = Compra_total.objects.all().last()
