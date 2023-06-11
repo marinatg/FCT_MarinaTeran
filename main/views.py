@@ -279,20 +279,20 @@ class EventoDetalle(View):
             zona = request.GET.get("zonita")
             print('zona')
             print(zona)
-            asientos = Asiento_evento.objects.filter(zona_evento=zonas[int(zona)].id)
+            zona1 = int(zona) - 1
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[zona1].id)
             print('asientos')
             print(asientos)
             for i in asientos:
                 asientoEvento = request.GET.get(str(i.id), "False")
-
+                print('asientoEvento')
+                print(asientoEvento)
                 if asientoEvento != "False":
                     asientosElegidos.append(i)
 
             if "asientos_elegidos" in request.session:
-                print(request.session["asientos_elegidos"])
                 del request.session['asientos_elegidos']
             if "datosCompra" in request.session:
-                print(request.session["datosCompra"])
                 del request.session['datosCompra']
 
 
