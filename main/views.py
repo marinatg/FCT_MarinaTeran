@@ -630,6 +630,8 @@ def pago(request):
     user = request.user
     num_user = user.id
     usuario = User.objects.get(id = request.user.id)
+    print("usuario")
+    print(usuario)
 
     if detalle_precio == precio_total:
         print("Validacion")
@@ -658,7 +660,7 @@ def pago(request):
             print(asiento_comprado)
             """Asigno el asiento al usuario y lo inhabilito(ya está comprado)"""
             asiento_reserva = Asiento_evento.objects.get(id=a.id)
-            asiento_reserva.usuario = num_user
+            asiento_reserva.usuario = usuario
             asiento_reserva.estado = True
             asiento_reserva.save()
             print("Asiento evento modificado")

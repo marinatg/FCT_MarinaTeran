@@ -17,6 +17,7 @@
         {% for x in zonaEvento %}
         <label for="{{x.id}}">{{x.zona.nombre}}</label>
         <input type="number" id="{{x.id}}" name="{{x.id}}" step="any" required>
+        <p></p>
         {% endfor %}
         <p></p>
         <button class="btn btn-info" name="boton" type="submit">Guardar precios</button>
