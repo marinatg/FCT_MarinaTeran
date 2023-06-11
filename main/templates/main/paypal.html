@@ -30,6 +30,11 @@
 
     </div>
     <div id="total" data-total="{{ total }}" style="display: none;"></div>
+    <form method="post">
+        {% csrf_token %}
+     <button type="submit" id="hiddenButton" style="display:none;"></button>
+    </form>
+
     <script
             src="https://www.paypal.com/sdk/js?client-id=AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD">
     </script>
@@ -62,10 +67,18 @@
               }).then(function(res) {
                 return res.json();
               }).then(function(details) {
-                alert(details.mensaje);
+                if (details.mensaje == 'Correcto'){
+                    let hiddenButton = document.getElementById("hiddenButton");
+                    hiddenButton.click();
+                }else{
+                    alert(details.mensaje);
+                }
+
               });
             }
         }).render('#paypal-button-container');
     </script>
+
+
 </body>
 </html>

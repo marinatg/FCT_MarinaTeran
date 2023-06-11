@@ -601,14 +601,22 @@ class EliminarAsientoEvento(DeleteView):
 class Paypal(TemplateView):
     template_name = 'main/paypal.html'
     def get(self, request):
+        print("Entramos a get paypal")
         """recuperar total y pasarla por parametros"""
         if 'datosCompra' in request.session:
             entradas = request.session['datosCompra']
 
             data = json.loads(entradas)
             total = data['precio_total']
+        print(self)
+        print(request)
         print("Antes de render paypal")
         return render(request, self.template_name, {'total': total})
+
+    def post(self, request):
+        print("Entramos a post paypal")
+        return redirect('resumenCompra')
+
 def pago(request):
     print("Dentro de vista pago")
     print(request)
@@ -678,7 +686,14 @@ def pago(request):
             asiento_reserva.save()
             print("Asiento evento modificado")
             print(asiento_reserva)
-        return redirect('resumen_compra')
+
+        data = {
+            "mensaje": "Correcto"
+        }
+        print("El error")
+
+        return JsonResponse(data)
+
 
     else:
         data = {
@@ -688,15 +703,21 @@ def pago(request):
 
         return JsonResponse(data)
 
-class ResumenCompra(View):
-    model = Compra_total
-    template_name = 'main/resumen_compra.html'
-
-    def get(self, request, *args, **kwargs):
+class ResumenCompra(TemplateView):
+    template_name = 'main/resumenCompra.html'
+    def get(self, request):
+        print('Dentro de ResumenCompra')
         ultimo_pedido = Compra_total.objects.all().last()
         asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id)
-        print("Dentro de resumen compra")
+        print(ultimo_pedido)
+        print(asientos)
+        print(self)
+        print(request)
+
+        print("Antes de render resumen compra")
+
         return render(request, self.template_name, {'ultimo-pedido': ultimo_pedido, 'asientos': asientos})
+
 class PaypalClient:
     def __init__(self):
         self.client_id = "AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD"
