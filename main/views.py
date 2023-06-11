@@ -716,7 +716,7 @@ class ResumenCompra(TemplateView):
 
         print("Antes de render resumen compra")
 
-        return render(request, self.template_name, {'ultimo-pedido': ultimo_pedido, 'asientos': asientos})
+        return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 
 class PaypalClient:
     def __init__(self):

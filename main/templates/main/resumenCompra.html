@@ -2,6 +2,42 @@
 
 <html>
 {% block content %}
-    <p>Hola</p>
+
+<div class="container">
+
+  <div class="row align-items-start">
+      <h1>Resumen de la compra</h1>
+    <div class="row">
+    <p></p>
+    <div class="col rounded float-start m-5">
+        <h5>Fecha de compra: {{ultimo_pedido.fecha_hora}}</h5><br/>
+        <h5>Total: </h5><h3>{{ultimo_pedido.total}} €</h3><br/>
+        <h5>Fecha del evento: {{ultimo_pedido.zona_evento.evento.fecha_hora}}</h5><br/>
+    </div>
+    <div class="col rounded float-end"><img class="col rounded float-end m-5" src="{{ ultimo_pedido.zona_evento.evento.imagen.url }}" height="230" /></div>
+      </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col">
+        <hr />
+        <h5>Evento: <h5><h3>{{ultimo_pedido.zona_evento.evento.nombre}}</h3><br/>
+        <h5>Sala: </h5><h3>{{ultimo_pedido.zona_evento.zona.sala.nombre}}</h3>
+        <div class="col rounded "><img class="col rounded m-1" src="{{ ultimo_pedido.zona_evento.zona.sala.mapa.url }}" height="100" /></div>
+
+    </div>
+
+    <div class="col">
+    <hr />
+    <h5>Zona: </h5><h3>{{ultimo_pedido.zona_evento.zona.nombre}}</h3><br/>
+    <h5>Asientos: </h5>
+    {% for y in asientos %}
+        <h3>{{y.asiento_evento.asiento.nombre}}</h3><br/>
+    {% endfor %}
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 </html>
