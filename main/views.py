@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from cffi.backend_ctypes import unicode
 from django.contrib.auth import authenticate, login, logout
@@ -278,7 +278,7 @@ class EventoDetalle(View):
 
         else:
             zonita = 1
-            asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id).order_by('asiento__nombre')
 
         zonaElegida = Zona_evento.objects.get(evento=pk, zona=zonita)
         unidades = request.GET.get("unidades", "0")
@@ -287,16 +287,10 @@ class EventoDetalle(View):
         if unidades > "0":
 
             zona = request.GET.get("zonita")
-            print('zona')
-            print(zona)
             zona1 = int(zona) - 1
             asientos = Asiento_evento.objects.filter(zona_evento=zonas[zona1].id)
-            print('asientos')
-            print(asientos)
             for i in asientos:
                 asientoEvento = request.GET.get(str(i.id), "False")
-                print('asientoEvento')
-                print(asientoEvento)
                 if asientoEvento != "False":
                     asientosElegidos.append(i)
 
@@ -323,8 +317,6 @@ class EventoDetalle(View):
             request.session['datosCompra'] = json_data
 
             request.session.save()
-
-            print(asientosElegidos)
 
             return redirect('paypal')
 
@@ -527,7 +519,6 @@ class EliminarEvento(DeleteView):
     fields = '__all__'
 
     def post(self, request, *args, **kwargs):
-        print("MAldita sea")
         for key, value in kwargs.items():
             idEvento = value
             print(idEvento)
@@ -536,11 +527,20 @@ class EliminarEvento(DeleteView):
         for z in r_zonas:
             zonas = Zona_evento.objects.get(id=z.id)
             r_asientos = Asiento_evento.objects.filter(zona_evento=zonas.id)
+            """Recorro las zonas y busco las compras que la contienen para eliminarlas"""
+            compra_evento = Compra_total.objects.filter(zona_evento=z)
+            for c in compra_evento:
+                """Lo mismo con compra_asiento..."""
+                entradas = Compra_asiento.objects.filter(compra=c)
+                for e in entradas:
+                    entradas.delete()
+            compra_evento.delete()
             for a in r_asientos:
                 asientos = Asiento_evento.objects.get(id=a.id)
                 asientos.delete()
             zonas.delete()
         evento.delete()
+
         return redirect('panelAdmin')
 
 class AgregarZonaEvento(CreateView):
@@ -610,57 +610,35 @@ class Paypal(TemplateView):
         return redirect('resumenCompra')
 
 def pago(request):
-    print("Dentro de vista pago")
-    print(request)
     asientoEvento = []
     if 'asientos_elegidos' in request.session:
         items = request.session['asientos_elegidos']
-        print("Recupero sesion")
         for obj in serializers.deserialize('json', items):
             asientoEvento.append(obj.object)
-        print('asientoEvento')
-        print(asientoEvento)
     if 'datosCompra' in request.session:
         entradas = request.session['datosCompra']
-        print("Recupero sesion 2")
         data = json.loads(entradas)
         unidades = data['unidades']
         precio_entrada = data['precio_entrada']
         precio_total = data['precio_total']
-    print("Antes de data")
     data = json.loads(request.body)
-    print("antes de orderid")
-    print(data)
     order_id = data['orderID']
-    print("antes de get order")
     detalle = GetOrder().get_order(order_id)
-    print("Despues de get order")
-    print(detalle)
     detalle_precio = float(detalle.result.purchase_units[0].amount.value)
-    print("Dettalle precio:")
-    print(detalle_precio)
 
     user = request.user
     num_user = user.id
     usuario = User.objects.get(id = request.user.id)
-    print("usuario")
-    print(usuario)
 
     if detalle_precio == precio_total:
-        print("Validacion")
         trx = CaptureOrder().capture_order(order_id, debug=True)
-        print(trx)
         pedido = Compra_total.objects.create(
             usuario = usuario,
-            fecha_hora = date.today(),
+            fecha_hora = datetime.now(),
             zona_evento = asientoEvento[0].zona_evento,
             total = precio_total
         )
-        print("pedido")
-        print(pedido)
         pedido.save()
-        print("Pedido guardado")
-        print(pedido)
         ultimo_pedido = Compra_total.objects.all().last()
         for a in asientoEvento:
             asiento_comprado = Compra_asiento.objects.create(
@@ -669,44 +647,36 @@ def pago(request):
             )
 
             asiento_comprado.save()
-            print("Asiento comprado")
-            print(asiento_comprado)
             """Asigno el asiento al usuario y lo inhabilito(ya está comprado)"""
             asiento_reserva = Asiento_evento.objects.get(id=a.id)
             asiento_reserva.usuario = usuario
             asiento_reserva.estado = True
             asiento_reserva.save()
-            print("Asiento evento modificado")
-            print(asiento_reserva)
+        # Restar asientos disponibles en evento cada vez que se compre uno
+        # evento = Evento.objects.filter(evento=pedido.zona_evento.evento)
+        #
+        # for i in evento:
+        #     i.disponibles = i.disponibles -1
+        #     i.save()
 
         data = {
             "mensaje": "Correcto"
         }
-        print("El error")
 
         return JsonResponse(data)
-
 
     else:
         data = {
             "mensaje": "Error en la compra"
         }
-        print("El error")
 
         return JsonResponse(data)
 
 class ResumenCompra(TemplateView):
     template_name = 'main/resumenCompra.html'
     def get(self, request):
-        print('Dentro de ResumenCompra')
         ultimo_pedido = Compra_total.objects.filter(usuario=request.user).last()
         asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id)
-        print(ultimo_pedido)
-        print(asientos)
-        print(self)
-        print(request)
-
-        print("Antes de render resumen compra")
 
         return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 
