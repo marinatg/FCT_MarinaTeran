@@ -1,11 +1,127 @@
-    {% block titulo %}    <h1>Insertar una nueva sala:</h1>  {% endblock %}
+{% extends 'base.html' %}
 
-    {% block contenido %}
-        <style>
-            #login-row {
+{% block content %}
+<html>
+    <style>
+        .hm-gradient {
+            background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+        }
+        .darken-grey-text {
+            color: #2E2E2E;
+        }
+        .danger-text {
+            color: #ff3547; }
+        .default-text {
+            color: #2BBBAD;
+        }
+        .info-text {
+            color: #33b5e5;
+        }
+        .form-white .md-form label {
+          color: black;
+        }
+        .form-white input[type=text]:focus:not([readonly]) {
+            border-bottom: 1px solid #fff;
+            -webkit-box-shadow: 0 1px 0 0 #fff;
+            box-shadow: 0 1px 0 0 #fff;
+        }
+        .form-white input[type=text]:focus:not([readonly]) + label {
+            color: #fff;
+        }
+        .form-white input[type=password]:focus:not([readonly]) {
+            border-bottom: 1px solid #fff;
+            -webkit-box-shadow: 0 1px 0 0 #fff;
+            box-shadow: 0 1px 0 0 #fff;
+        }
+        .form-white input[type=password]:focus:not([readonly]) + label {
+            color: #fff;
+        }
+        .form-white input[type=password], .form-white input[type=text] {
+            border-bottom: 1px solid #fff;
+        }
+        .form-white .form-control:focus {
+            color: #fff;
+        }
+        .form-white .form-control {
+            color: #fff;
+        }
+        .form-white textarea.md-textarea:focus:not([readonly]) {
+            border-bottom: 1px solid #fff;
+            box-shadow: 0 1px 0 0 #fff;
+            color: #fff;
+        }
+        .form-white textarea.md-textarea  {
+            border-bottom: 1px solid #fff;
+            color: #fff;
+        }
+        .form-white textarea.md-textarea:focus:not([readonly])+label {
+            color: #fff;
+        }
+        .ripe-malinka-gradient {
+            background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+        }
+        .near-moon-gradient {
             background-image: linear-gradient(to bottom, #5ee7df 0%, #b490ca 100%);
-            }
-        </style>
-        {% include 'main/form.html' %}
+        }
+    </style>
+      <div class="row offset-3 col-12">
+                <!-- Grid column -->
+                <div class="col-md-6 mb-4">
+                    <div class="card near-moon-gradient form-white">
+                        <div class="card-body">
+                            <!-- Form subscription -->
 
-    {% endblock %}
+                    <form enctype="multipart/form-data" method="post">
+                     {% csrf_token %}
+                     {{ form.as_p }}
+                           <h3 class="text-center indigo-text font-bold py-4"><strong>Crear una nueva sala</strong></h3>
+                                <div class="md-form offset-4 col-10">
+                                    <label for="nombre">Nombre:</label>
+                                     <input type="text" name="nombre" maxlength="10" required id="nombre">
+                                </div><br/>
+                                <div class="md-form  offset-4 col-10">
+                                    <label for="mapa">Imagen:</label>
+                                    <input type="file" name="mapa" required id="mapa">
+                                </div><br/>
+
+                                <div class="md-form offset-4 col-10">
+                                    <label for="zona1">Nombre zona 1:</label>
+                                     <input type="text" name="zona1" maxlength="10" required id="zona1">
+                                </div><br/>
+                               <div class="md-form offset-4 col-10">
+                                    <label for="aforozona1">Aforo zona 1:</label>
+                                     <input type="number" name="aforozona1"  min="1" max="99" required id="aforozona1">
+                                </div><br/>
+
+                                 <div class="md-form offset-4 col-10">
+                                    <label for="zona2">Nombre zona 2:</label>
+                                     <input type="text" name="zona2" maxlength="10" required id="zona2">
+                                </div><br/>
+                               <div class="md-form offset-4 col-10">
+                                    <label for="aforozona2">Aforo zona 2:</label>
+                                     <input type="number" name="aforozona2" min="1" max="99" required id="aforozona2">
+                                </div><br/>
+
+                                 <div class="md-form offset-4 col-10">
+                                    <label for="zona3">Nombre zona 3:</label>
+                                     <input type="text" name="zona3" maxlength="10" required id="zona3">
+                                </div><br/>
+                               <div class="md-form offset-4 col-10">
+                                    <label for="aforozona3">Aforo zona 3:</label>
+                                     <input type="number" name="aforozona3" min="1" max="99" required id="aforozona3">
+                                </div><br/>
+
+
+                                <div class="text-center py-4">
+                                    <button  type="submit" class="btn btn-info">Crear sala <i class="fa fa-paper-plane-o ml-1"></i></button>
+                                </div>
+                    </form>
+
+                            <!-- Form subscription -->
+                        </div>
+                    </div>
+                </div>
+
+
+</html>
+{% endblock %}

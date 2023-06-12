@@ -72,7 +72,7 @@
 
     <div class="row">
 
-        <div class="col">
+        <div class="col m-3">
 
         <h3>Escoge una zona: </h3>
         <form method="get">
@@ -103,6 +103,10 @@
                 <tr>
         {% for a in asientos %}
                     <td>
+                {% if eval == 0 %}
+                    <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}" disabled>
+                    <img src="/main/imagenes/deshabilitada.png" width="50" height="50" />
+                {% else %}
                     {% if a.estado == False %}
                     <input type="checkbox" id="{{a.id}}" name="{{a.id}}" value="{{a.id}}">
                         <img src="/main/imagenes/silla.png" width="50" height="50" />
@@ -113,11 +117,11 @@
                         <br/>
                     <label class=" m-2" for="{{a.id}}">{{ a.asiento.nombre }}</label>
                     </td>
-                {% if forloop.counter|divisibleby:4 %}
+            {% endif %}
+                {% if forloop.counter|divisibleby:10 %}
                 </tr>
                 <tr>
                 {% endif %}
-
         {% endfor %}
                 </tr>
              </table>
@@ -146,7 +150,11 @@
                     <input style="background-color: transparent; border: none;" type="text" id="precio" name="precio" value=0 step="any" readonly >
                     <input type="number" id="zonita" name="zonita" value="{{zonita}}" readonly style="display: none;"><br/>
                     <p></p>
-              <button  class="btn btn-success" name="boton" type="submit">Comprar</button>
+                    {% if eval == 0 %}
+                        <p style="color: red;">El evento ya no está disponible.</p>
+                    {% else %}
+                        <button  class="btn btn-success" name="boton" type="submit">Comprar</button>
+                    {% endif %}
         </form>
               {% endif %}
             </div>

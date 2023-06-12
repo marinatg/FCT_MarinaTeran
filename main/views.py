@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+import pytz
 from cffi.backend_ctypes import unicode
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -16,7 +17,7 @@ from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 
 from main.apps import PaypalConfig
-from main.forms import UnidadesForm, EventoForm
+from main.forms import UnidadesForm, EventoForm, SalaForm
 from main.models import *
 
 from django.db import transaction
@@ -135,7 +136,7 @@ class PerfilCliente(TemplateView):
         num_user = user.id
         perfil = Perfil.objects.filter(usuario_id=num_user)
 
-        compras = Compra_total.objects.filter(usuario=num_user)
+        compras = Compra_total.objects.filter(usuario=num_user).order_by('id')
 
         return render(request, self.template_name, {'perfil': perfil, 'compras': compras})
 
@@ -144,7 +145,7 @@ class CompraDetalle(TemplateView):
 
     def get(self, request, pk, *args, **kwargs):
         ultimo_pedido = Compra_total.objects.get(id=pk)
-        asientos = Compra_asiento.objects.filter(compra=ultimo_pedido.id)
+        asientos = Compra_asiento.objects.filter(compra=ultimo_pedido.id).order_by('id')
 
         return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 
@@ -255,32 +256,30 @@ class EventoDetalle(View):
         perfil = Perfil.objects.filter(
             Q(usuario_id=num_user)
         ).distinct()
-
-        zonas = Zona_evento.objects.filter(evento=pk)
+        ahora = datetime.now(pytz.utc)
+        if evento.fecha_hora < ahora:
+            eval = 0
+        else:
+            eval = 1
+        """Ordenar zonas por id"""
+        zonas = Zona_evento.objects.filter(evento=pk).order_by('id')
         zonita = zona
         asientos = []
         if zonita:
             if zonita == '1':
                 zonita = 1
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
-                print('asientos1')
-                print(asientos)
             if zonita == '2':
                 zonita = 2
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[1].id)
-                print('asientos2')
-                print(asientos)
             if zonita == '3':
                 zonita = 3
                 asientos = Asiento_evento.objects.filter(zona_evento=zonas[2].id)
-                print('asientos3')
-                print(asientos)
-
         else:
             zonita = 1
-            asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id).order_by('asiento__nombre')
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id).order_by('id')
 
-        zonaElegida = Zona_evento.objects.get(evento=pk, zona=zonita)
+        zonaElegida = Zona_evento.objects.get(id=asientos[0].zona_evento.id)
         unidades = request.GET.get("unidades", "0")
         asientosElegidos = []
 
@@ -288,7 +287,7 @@ class EventoDetalle(View):
 
             zona = request.GET.get("zonita")
             zona1 = int(zona) - 1
-            asientos = Asiento_evento.objects.filter(zona_evento=zonas[zona1].id)
+            asientos = Asiento_evento.objects.filter(zona_evento=zonas[zona1].id).order_by('id')
             for i in asientos:
                 asientoEvento = request.GET.get(str(i.id), "False")
                 if asientoEvento != "False":
@@ -320,7 +319,7 @@ class EventoDetalle(View):
 
             return redirect('paypal')
 
-        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida})
+        return render(request, self.template_name, {'evento': evento, 'perfil': perfil, 'zonas': zonas, 'zonita': zonita, 'asientos': asientos, 'zonaElegida': zonaElegida, 'eval': eval})
 
 """Panel de administración"""
 class PanelAdmin(TemplateView):
@@ -344,13 +343,73 @@ class AdministrarSala(View):
             asiento.append(asiento_zona)
         return render(request, self.template_name, {'zona': zona, 'asiento': asiento})
 
-class AgregarSala(CreateView):
+class AgregarSala(View):
     model = Sala
     template_name = 'PanelAdmin/agregarrSala.html'
-    fields = '__all__'
+    form_class = SalaForm
 
-    def get_success_url(self):
-        return reverse('panelAdmin')
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+    def post(self, request, *args, **kwargs):
+        nombre = request.POST.get("nombre")
+        imagen = request.FILES["mapa"]
+        zona1 = request.POST.get("zona1")
+        zona2 = request.POST.get("zona2")
+        zona3 = request.POST.get("zona3")
+        aforozona1 = request.POST.get("aforozona1")
+        aforozona2 = request.POST.get("aforozona2")
+        aforozona3 = request.POST.get("aforozona3")
+
+        aforo_total = int(aforozona1) + int(aforozona2) + int(aforozona3)
+
+        objSala = Sala.objects.create(nombre=nombre,
+                                        mapa=imagen,
+                                        aforo=aforo_total)
+        objSala.save()
+
+        sala = Sala.objects.all().last()
+
+        zona_uno = Zona.objects.create(sala=sala,
+                                        nombre=zona1,
+                                        aforo=aforozona1)
+        zona_uno.save()
+        zona_dos = Zona.objects.create(sala=sala,
+                                       nombre=zona2,
+                                       aforo=aforozona2)
+        zona_dos.save()
+        zona_tres = Zona.objects.create(sala=sala,
+                                        nombre=zona3,
+                                        aforo=aforozona3)
+        zona_tres.save()
+
+        zonas = Zona.objects.filter(sala=sala.id)
+
+        cont = 0
+        aforo = 0
+        for z in zonas:
+            cont = cont + 1
+            if cont == 1:
+                letra_asiento = "A"
+                aforo = int(aforozona1)
+            if cont == 2:
+                letra_asiento = "B"
+                aforo = int(aforozona2)
+            if cont == 3:
+                letra_asiento = "C"
+                aforo = int(aforozona3)
+
+            for i in range(0, aforo):
+                if i < 10:
+                    letra_dos = "0"
+                else:
+                    letra_dos = ""
+
+                asiento = Asiento.objects.create(zona = z,
+                                                 nombre = letra_asiento + letra_dos + str(i))
+                asiento.save()
+
+        return redirect('panelAdmin')
+
 
 class EditarSala(UpdateView):
     model = Sala
@@ -365,13 +424,7 @@ class EliminarSala(DeleteView):
 
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
-class AgregarEvento(CreateView):
-    model = Evento
-    template_name = 'PanelAdmin/agregarEvento.html'
-    fields = '__all__'
 
-    def get_success_url(self):
-        return reverse('panelAdmin')
 
 class EditarEvento(UpdateView):
     model = Evento
@@ -380,12 +433,6 @@ class EditarEvento(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
 
-class EliminarEvento(DeleteView):
-    model = Evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
 class AgregarZona(CreateView):
     model = Zona
     template_name = 'PanelAdmin/agregarZona.html'
@@ -466,7 +513,7 @@ class AgregarEvento(View):
         objEvento.save()
 
         evento = Evento.objects.all().last()
-        zona = Zona.objects.filter(sala=sala)
+        zona = Zona.objects.filter(sala=sala).order_by('id')
         for i in zona:
 
             zona_evento = Zona_evento.objects.create(evento=evento,
@@ -477,7 +524,7 @@ class AgregarEvento(View):
             zona_evento.save()
 
             zona_evento_ultima = Zona_evento.objects.all().last()
-            asiento = Asiento.objects.filter(zona=i.id)
+            asiento = Asiento.objects.filter(zona=i.id).order_by('id')
             for j in asiento:
 
                 asiento_evento = Asiento_evento.objects.create(zona_evento=zona_evento_ultima,
@@ -498,7 +545,7 @@ class AsignarPrecioZonaEvento(View):
 
     def post(self, request, *args, **kwargs):
         evento = Evento.objects.all().last()
-        zonaEvento = Zona_evento.objects.filter(evento=evento)
+        zonaEvento = Zona_evento.objects.filter(evento=evento).order_by('id')
 
         for i in zonaEvento:
             precio = request.POST.get(str(i.id))
@@ -523,15 +570,15 @@ class EliminarEvento(DeleteView):
             idEvento = value
             print(idEvento)
         evento = Evento.objects.get(id=idEvento)
-        r_zonas = Zona_evento.objects.filter(evento=evento.id)
+        r_zonas = Zona_evento.objects.filter(evento=evento.id).order_by('id')
         for z in r_zonas:
             zonas = Zona_evento.objects.get(id=z.id)
-            r_asientos = Asiento_evento.objects.filter(zona_evento=zonas.id)
+            r_asientos = Asiento_evento.objects.filter(zona_evento=zonas.id).order_by('id')
             """Recorro las zonas y busco las compras que la contienen para eliminarlas"""
-            compra_evento = Compra_total.objects.filter(zona_evento=z)
+            compra_evento = Compra_total.objects.filter(zona_evento=z).order_by('id')
             for c in compra_evento:
                 """Lo mismo con compra_asiento..."""
-                entradas = Compra_asiento.objects.filter(compra=c)
+                entradas = Compra_asiento.objects.filter(compra=c).order_by('id')
                 for e in entradas:
                     entradas.delete()
             compra_evento.delete()
@@ -640,6 +687,13 @@ def pago(request):
         )
         pedido.save()
         ultimo_pedido = Compra_total.objects.all().last()
+        """Restar numero de asientos comprados, de los disponibles en evento y zona"""
+        zonaEv = Zona_evento.objects.get(id=ultimo_pedido.zona_evento.id)
+        evento = Evento.objects.get(id=zonaEv.evento.id)
+        zonaEv.disponibles = zonaEv.disponibles - unidades
+        evento.disponibles = evento.disponibles - unidades
+        zonaEv.save()
+        evento.save()
         for a in asientoEvento:
             asiento_comprado = Compra_asiento.objects.create(
                 asiento_evento = a,
@@ -652,12 +706,6 @@ def pago(request):
             asiento_reserva.usuario = usuario
             asiento_reserva.estado = True
             asiento_reserva.save()
-        # Restar asientos disponibles en evento cada vez que se compre uno
-        # evento = Evento.objects.filter(evento=pedido.zona_evento.evento)
-        #
-        # for i in evento:
-        #     i.disponibles = i.disponibles -1
-        #     i.save()
 
         data = {
             "mensaje": "Correcto"
@@ -676,7 +724,7 @@ class ResumenCompra(TemplateView):
     template_name = 'main/resumenCompra.html'
     def get(self, request):
         ultimo_pedido = Compra_total.objects.filter(usuario=request.user).last()
-        asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id)
+        asientos = Compra_asiento.objects.filter(compra = ultimo_pedido.id).order_by('id')
 
         return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 

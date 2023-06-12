@@ -24,3 +24,5 @@ class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre', 'imagen', 'fecha_hora', 'sala']
+
+
