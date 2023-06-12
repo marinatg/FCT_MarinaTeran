@@ -71,7 +71,11 @@
                 <h5 class="card-title">{{x.nombre}}</h5>
                 <h6>{{x.fecha_hora}}</h6>
                 <p class="card-text">Quedan {{x.disponibles}} entradas disponibles</p>
-                <a href="{% url 'eventoDetalle' pk=x.id %}" class="btn btn-info">Comprar entradas</a>
+                    {% if x.fecha_hora < ahora %}
+                    <p style="color: red;">El evento ya no está disponible.</p>
+                    {% else %}
+                    <a href="{% url 'eventoDetalle' pk=x.id %}" class="btn btn-info">Comprar entradas</a>
+                    {% endif %}
               </div>
             </div>
         {% endfor %}

@@ -198,6 +198,8 @@ class ListadoEventos(TemplateView):
         fechaInicio = request.GET.get("fecha")
         fechaFin = request.GET.get("fecha2")
 
+        ahora = datetime.now(pytz.utc)
+
         if busqueda:
 
             evento = Evento.objects.filter(nombre__icontains=busqueda)
@@ -239,7 +241,7 @@ class ListadoEventos(TemplateView):
                         else:
                             evento = Evento.objects.filter(disponibles__gt='0')
 
-        return render(request, self.template_name, {'evento':evento, 'busqueda': busqueda, 'disponible': disponible, 'fechaInicio': fechaInicio, 'fechaFin': fechaFin})
+        return render(request, self.template_name, {'evento':evento, 'busqueda': busqueda, 'disponible': disponible, 'fechaInicio': fechaInicio, 'fechaFin': fechaFin, 'ahora': ahora})
 
 """EVENTO DETALLE"""
 
