@@ -15,6 +15,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, resolve
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
+from reportlab.lib.units import inch
 
 from main.apps import PaypalConfig
 from main.forms import UnidadesForm, EventoForm, SalaForm
@@ -128,55 +129,56 @@ class CompraDetalle(TemplateView):
         if generar != "cero":
             # Crear la respuesta HTTP con el PDF adjunto
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="mi_pdf.pdf"'
+            response['Content-Disposition'] = 'attachment; filename="entradas.pdf"'
 
             # Generar el contenido del PDF
             buffer = response
             p = canvas.Canvas(buffer)
+
             evento_nombre = ultimo_pedido.zona_evento.evento.nombre
             precio = "Total: " + str(ultimo_pedido.total) + " €"
             fecha = "Fecha del evento: " + str(ultimo_pedido.zona_evento.evento.fecha_hora)
             sala = "Sala: " + ultimo_pedido.zona_evento.evento.sala.nombre
             zona = "Zona: " + ultimo_pedido.zona_evento.zona.nombre
-            # Añadir título al PDF
-            p.setFont('Helvetica', 32)
-            p.drawString(70, 720, evento_nombre)
 
-            # Añadir imagen al PDF
-            image_path = '	http://localhost:8000/main/imagenes/marcadeagua.png'
-            p.drawImage(image_path, 490, 750, width=80, height=80)
-
-            #Mas contenido
-            image_path = '	http://localhost:8000/main/imagenes/doors_1lcPHdU.jpg'
-            p.drawImage(image_path, 100, 500, width=350, height=200)
-
-            p.setFont('Helvetica', 27)
-            p.drawString(70, 460, precio)
-
-            p.setFont('Helvetica', 17)
-            p.drawString(70, 420, fecha)
-
-            p.setFont('Helvetica', 17)
-            p.drawString(70, 380, sala)
-
-            image_path = 'http://localhost:8000/main/imagenes/3gatos_K1Q9X7B.jpg'
-            p.drawImage(image_path, 220, 330, width=100, height=70)
-
-            p.setFont('Helvetica', 27)
-            p.drawString(70, 300, zona)
-
-            separacion = 300
             for a in asientos:
-                separacion = separacion - 90
-                separacion2 = separacion - 50
+                # Añadir título al PDF
+                p.setFont('Helvetica-Bold', 32)
+                p.drawString(70, 720, evento_nombre)
+
+                # Añadir imagen al PDF
+                image_path = '	http://localhost:8000/main/imagenes/marcadeagua.png'
+                p.drawImage(image_path, 490, 750, width=80, height=80)
+
+                # Mas contenido
+                image_path = '	http://localhost:8000/main/imagenes/doors_1lcPHdU.jpg'
+                p.drawImage(image_path, 100, 500, width=350, height=200)
+
+                p.setFont('Helvetica', 27)
+                p.drawString(70, 460, precio)
+
+                p.setFont('Helvetica', 17)
+                p.drawString(70, 420, fecha)
+
+                p.setFont('Helvetica', 17)
+                p.drawString(70, 380, sala)
+
+                image_path = 'http://localhost:8000/main/imagenes/3gatos_K1Q9X7B.jpg'
+                p.drawImage(image_path, 220, 330, width=100, height=70)
+
+                p.setFont('Helvetica', 27)
+                p.drawString(70, 280, zona)
+
                 n = a.asiento_evento.asiento.nombre
-                p.setFont('Helvetica', 30)
-                p.drawString(70, separacion, n)
+                p.setFont('Helvetica-Bold', 30)
+                p.drawString(70, 180, n)
                 image_path = 'http://localhost:8000/main/imagenes/QR.png'
-                p.drawImage(image_path, 220, separacion2, width=80, height=80)
+                p.drawImage(image_path, 250, 160, width=130, height=130)
+
+                p.showPage()
 
             # Finalizar el PDF
-            p.showPage()
+
             p.save()
 
             return response
