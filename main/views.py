@@ -423,9 +423,41 @@ class EditarSala(UpdateView):
 class EliminarSala(DeleteView):
     model = Sala
     fields = '__all__'
+    def post(self, request, *args, **kwargs):
+        for key, value in kwargs.items():
+            idSala = value
+            evento = Evento.objects.filter(sala=idSala)
+            for ev in evento:
+                r_zonasE = Zona_evento.objects.filter(evento=ev.id).order_by('id')
+                for y in r_zonasE:
+                    zonasE = Zona_evento.objects.get(id=y.id)
+                    r_asientosE = Asiento_evento.objects.filter(zona_evento=zonasE.id).order_by('id')
+                    """Recorro las zonas y busco las compras que la contienen para eliminarlas"""
+                    compra_evento = Compra_total.objects.filter(zona_evento=y).order_by('id')
+                    for c in compra_evento:
+                        """Lo mismo con compra_asiento..."""
+                        entradas = Compra_asiento.objects.filter(compra=c).order_by('id')
+                        for e in entradas:
+                            entradas.delete()
+                    compra_evento.delete()
+                    for p in r_asientosE:
+                        asientos = Asiento_evento.objects.get(id=p.id)
+                        asientos.delete()
+                    zonasE.delete()
+                ev.delete()
 
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
+        sala = Sala.objects.get(id=idSala)
+        r_zonas = Zona.objects.filter(sala=sala.id).order_by('id')
+        for z in r_zonas:
+            zonas = Zona.objects.get(id=z.id)
+            r_asientos = Asiento.objects.filter(zona=zonas.id).order_by('id')
+            for a in r_asientos:
+                asientos = Asiento.objects.get(id=a.id)
+                asientos.delete()
+            zonas.delete()
+        sala.delete()
+
+        return redirect('panelAdmin')
 
 
 class EditarEvento(UpdateView):
