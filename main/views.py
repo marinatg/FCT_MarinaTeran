@@ -43,29 +43,6 @@ from io import BytesIO
 
 
 
-def generar_pdf(request):
-    # Crear la respuesta HTTP con el PDF adjunto
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="mi_pdf.pdf"'
-
-    # Generar el contenido del PDF
-    buffer = response
-    p = canvas.Canvas(buffer)
-
-    # Añadir contenido al PDF
-    p.setFont('Helvetica', 12)
-    p.drawString(100, 700, "¡Aqui tiene que aparecer el maldito resumen de la compra T_T!")
-
-    # # Añadir imagen al PDF
-    # image_path = '/main/imagenes/silla.png'  # Reemplaza con la ruta de tu imagen en tu proyecto
-    # p.drawImage(image_path, 100, 500, width=200, height=200)
-
-    # Finalizar el PDF
-    p.showPage()
-    p.save()
-
-    return response
-
 class LazyEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Asiento_evento):
@@ -146,6 +123,63 @@ class CompraDetalle(TemplateView):
     def get(self, request, pk, *args, **kwargs):
         ultimo_pedido = Compra_total.objects.get(id=pk)
         asientos = Compra_asiento.objects.filter(compra=ultimo_pedido.id).order_by('id')
+
+        generar = request.GET.get("pdf", "cero")
+        if generar != "cero":
+            # Crear la respuesta HTTP con el PDF adjunto
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="mi_pdf.pdf"'
+
+            # Generar el contenido del PDF
+            buffer = response
+            p = canvas.Canvas(buffer)
+            evento_nombre = ultimo_pedido.zona_evento.evento.nombre
+            precio = "Total: " + str(ultimo_pedido.total) + " €"
+            fecha = "Fecha del evento: " + str(ultimo_pedido.zona_evento.evento.fecha_hora)
+            sala = "Sala: " + ultimo_pedido.zona_evento.evento.sala.nombre
+            zona = "Zona: " + ultimo_pedido.zona_evento.zona.nombre
+            # Añadir título al PDF
+            p.setFont('Helvetica', 32)
+            p.drawString(70, 720, evento_nombre)
+
+            # Añadir imagen al PDF
+            image_path = '	http://localhost:8000/main/imagenes/marcadeagua.png'
+            p.drawImage(image_path, 490, 750, width=80, height=80)
+
+            #Mas contenido
+            image_path = '	http://localhost:8000/main/imagenes/doors_1lcPHdU.jpg'
+            p.drawImage(image_path, 100, 500, width=350, height=200)
+
+            p.setFont('Helvetica', 27)
+            p.drawString(70, 460, precio)
+
+            p.setFont('Helvetica', 17)
+            p.drawString(70, 420, fecha)
+
+            p.setFont('Helvetica', 17)
+            p.drawString(70, 380, sala)
+
+            image_path = 'http://localhost:8000/main/imagenes/3gatos_K1Q9X7B.jpg'
+            p.drawImage(image_path, 220, 330, width=100, height=70)
+
+            p.setFont('Helvetica', 27)
+            p.drawString(70, 300, zona)
+
+            separacion = 300
+            for a in asientos:
+                separacion = separacion - 90
+                separacion2 = separacion - 50
+                n = a.asiento_evento.asiento.nombre
+                p.setFont('Helvetica', 30)
+                p.drawString(70, separacion, n)
+                image_path = 'http://localhost:8000/main/imagenes/QR.png'
+                p.drawImage(image_path, 220, separacion2, width=80, height=80)
+
+            # Finalizar el PDF
+            p.showPage()
+            p.save()
+
+            return response
 
         return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 

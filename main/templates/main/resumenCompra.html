@@ -7,8 +7,11 @@
 
   <div class="row align-items-start">
       <h1>Resumen de la compra</h1>
+      <form method="get">
+        <input type="text" value="uno" name="pdf" style="display: none;" />
         <!-- Agrega un enlace para descargar el PDF -->
-        <a href="{% url 'generar_pdf' %}?evento_id={{ evento.id }}">Generar PDF</a>
+        <button type="submit" class="btn btn-info">Generar pdf</button>
+      </form>
     <div class="row">
     <p></p>
     <div class="col rounded float-start m-5">

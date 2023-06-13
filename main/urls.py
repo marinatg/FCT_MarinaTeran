@@ -43,7 +43,7 @@ urlpatterns = [
     path('PanelAdmin/asignarPrecioZonaEvento/', views.AsignarPrecioZonaEvento.as_view(template_name='PanelAdmin/asignarPrecioZonaEvento.html'), name='asignarPrecioZonaEvento'),
     path('main/paypal/', views.Paypal.as_view(template_name='main/paypal.html'), name='paypal'),
     path('main/pago/', views.pago, name= 'pago'),
-    path('main/generar_pdf/', views.generar_pdf, name='generar_pdf'),
+    # path('main/generar_pdf/', views.generar_pdf, name='generar_pdf'),
     path('main/resumenCompra/', views.ResumenCompra.as_view(template_name='main/resumenCompra.html'), name='resumenCompra'),
     path('main/compraDetalle/<int:pk>', views.CompraDetalle.as_view(template_name='main/resumenCompra.html'), name='compraDetalle'),
 
