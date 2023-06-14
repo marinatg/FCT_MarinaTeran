@@ -1,25 +1,16 @@
 from datetime import date, datetime
 
 import pytz
-from PIL.Image import Image
 from cffi.backend_ctypes import unicode
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import *
 from django.contrib.sessions import serializers
-from django.contrib.sites import requests
-from django.core.serializers import serialize
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db import transaction
+
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, resolve
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
-from reportlab.lib.units import inch
 
-from main.apps import PaypalConfig
 from main.forms import UnidadesForm, EventoForm, SalaForm
 from main.models import *
 
@@ -34,12 +25,9 @@ from django.core.serializers import serialize
 from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 import sys, json
-from django.http import HttpResponse
 from reportlab.pdfgen import canvas
-from django.template.loader import render_to_string
 from django.http import HttpResponse
-from django.template.loader import get_template
-from io import BytesIO
+
 
 
 # Create your views here.
