@@ -62,14 +62,8 @@ class Registro(CreateView):
                                                     password=request.POST['password1'])
                     user.save()
 
-                    perfil = Perfil.objects.create(usuario_id=user.id,
-                                    dni=request.POST['dni'],
-                                    telefono=request.POST['telefono'])
-
-                    perfil.save()
-
                     login(request, user)
-                    return redirect('welcome')
+                    return redirect('listadoEventos')
                 except:
                     return render(request, "main/registro.html",
                                   {'form': UserCreationForm, 'error': 'El usuario ya existe'})
@@ -163,7 +157,7 @@ class CompraDetalle(TemplateView):
                 p.setFont('Helvetica-Bold', 30)
                 p.drawString(70, 180, n)
                 image_path = 'http://localhost:8000/main/imagenes/QR.png'
-                p.drawImage(image_path, 250, 160, width=130, height=130)
+                p.drawImage(image_path, 250, 130, width=130, height=130)
 
                 p.showPage()
 
@@ -296,13 +290,13 @@ class EventoDetalle(View):
         if zonita:
             if zonita == '1':
                 zonita = 1
-                asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id)
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id).order_by('id')
             if zonita == '2':
                 zonita = 2
-                asientos = Asiento_evento.objects.filter(zona_evento=zonas[1].id)
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[1].id).order_by('id')
             if zonita == '3':
                 zonita = 3
-                asientos = Asiento_evento.objects.filter(zona_evento=zonas[2].id)
+                asientos = Asiento_evento.objects.filter(zona_evento=zonas[2].id).order_by('id')
         else:
             zonita = 1
             asientos = Asiento_evento.objects.filter(zona_evento=zonas[0].id).order_by('id')
@@ -834,7 +828,7 @@ class ResumenCompra(TemplateView):
                 p.setFont('Helvetica-Bold', 30)
                 p.drawString(70, 180, n)
                 image_path = 'http://localhost:8000/main/imagenes/QR.png'
-                p.drawImage(image_path, 250, 160, width=130, height=130)
+                p.drawImage(image_path, 250, 130, width=130, height=130)
 
                 p.showPage()
 

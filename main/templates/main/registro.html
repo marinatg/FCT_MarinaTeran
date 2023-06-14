@@ -14,16 +14,7 @@
     {% csrf_token %}
 
         {{ form.as_p }}
-        <p>
-            <label for="id_dni">DNI:</label>
-            <input type="text" minlength="9" maxlength="9" name="dni" autocapitalize="none" required="" id="id_dni">
-            <span class="helptext">Requerido. 9 carácteres como máximo. Únicamente 1 letra, 8 dígitos.</span>
-        </p>
-        <p>
-            <label for="id_telefono">Teléfono:</label>
-            <input type="text" minlength="9" maxlength="9" name="telefono" autocapitalize="none" required="" id="id_telefono">
-            <span class="helptext">Requerido. 9 carácteres como máximo. Únicamente dígitos.</span>
-        </p>
+
         <p>
             <button>Registro</button>
         </p>
