@@ -132,10 +132,12 @@ class CompraDetalle(TemplateView):
 
                 # Añadir imagen al PDF
                 image_path = '	http://localhost:8000/main/imagenes/marcadeagua.png'
+                #image_path = '	http://3.216.41.255:9001/main/imagenes/marcadeagua.png'
                 p.drawImage(image_path, 490, 750, width=80, height=80)
 
                 # Mas contenido
                 image_path = 'http://localhost:8000/' + str(ultimo_pedido.zona_evento.evento.imagen.url)
+                # image_path = '	http://3.216.41.255:9001/' + str(ultimo_pedido.zona_evento.evento.imagen.url)
                 p.drawImage(image_path, 100, 500, width=350, height=200)
 
                 p.setFont('Helvetica', 27)
@@ -148,6 +150,7 @@ class CompraDetalle(TemplateView):
                 p.drawString(70, 380, sala)
 
                 image_path = 'http://localhost:8000/' + str(ultimo_pedido.zona_evento.zona.sala.mapa)
+                # image_path = 'http://3.216.41.255:9001/' + str(ultimo_pedido.zona_evento.zona.sala.mapa)
                 p.drawImage(str(image_path), 220, 330, width=100, height=70)
 
                 p.setFont('Helvetica', 27)
@@ -157,6 +160,7 @@ class CompraDetalle(TemplateView):
                 p.setFont('Helvetica-Bold', 30)
                 p.drawString(70, 180, n)
                 image_path = 'http://localhost:8000/main/imagenes/QR.png'
+                # image_path = 'http://3.216.41.255:9001/main/imagenes/QR.png'
                 p.drawImage(image_path, 250, 130, width=130, height=130)
 
                 p.showPage()
@@ -803,10 +807,12 @@ class ResumenCompra(TemplateView):
 
                 # Añadir imagen al PDF
                 image_path = 'http://localhost:8000/main/imagenes/marcadeagua.png'
+                #image_path = 'http://3.216.41.255:9001/main/imagenes/marcadeagua.png'
                 p.drawImage(image_path, 490, 750, width=80, height=80)
 
                 # Mas contenido
                 image_path = 'http://localhost:8000/' + str(ultimo_pedido.zona_evento.evento.imagen.url)
+                #image_path = 'http://3.216.41.255:9001/' + str(ultimo_pedido.zona_evento.evento.imagen.url)
                 p.drawImage(image_path, 100, 500, width=350, height=200)
 
                 p.setFont('Helvetica', 27)
@@ -819,6 +825,7 @@ class ResumenCompra(TemplateView):
                 p.drawString(70, 380, sala)
 
                 image_path = 'http://localhost:8000/' + str(ultimo_pedido.zona_evento.zona.sala.mapa)
+                # image_path = 'http://3.216.41.255:9001/' + str(ultimo_pedido.zona_evento.zona.sala.mapa)
                 p.drawImage(str(image_path), 220, 330, width=100, height=70)
 
                 p.setFont('Helvetica', 27)
@@ -828,6 +835,7 @@ class ResumenCompra(TemplateView):
                 p.setFont('Helvetica-Bold', 30)
                 p.drawString(70, 180, n)
                 image_path = 'http://localhost:8000/main/imagenes/QR.png'
+                # image_path = 'http://3.216.41.255:9001/main/imagenes/QR.png'
                 p.drawImage(image_path, 250, 130, width=130, height=130)
 
                 p.showPage()
