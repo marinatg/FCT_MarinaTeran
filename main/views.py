@@ -33,14 +33,17 @@ from django.http import HttpResponse
 # Create your views here.
 
 
-
+"""Serializar objetos de la clase Asiento_evento en formato JSON"""
 class LazyEncoder(DjangoJSONEncoder):
+    """Si el objeto es una instancia de esa clase, devuelve su representación en formato string"""
     def default(self, obj):
         if isinstance(obj, Asiento_evento):
             return str(obj)
         return super().default(obj)
 
+"""Serializar int y float en formato JSON"""
 class CustomEncoder(json.JSONEncoder):
+    """Si el objeto es de tipo int o float, devuelve su representación en formato string"""
     def default(self, obj):
         if isinstance(obj, int) or isinstance(obj, float):
             return str(obj)
@@ -491,49 +494,6 @@ class EditarEvento(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
 
-class AgregarZona(CreateView):
-    model = Zona
-    template_name = 'PanelAdmin/agregarZona.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('panelAdmin')
-
-class EditarZona(UpdateView):
-    model = Zona
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class EliminarZona(DeleteView):
-    model = Zona
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class AgregarAsiento(CreateView):
-    model = Asiento
-    template_name = 'PanelAdmin/agregarAsiento.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('panelAdmin')
-
-class EditarAsiento(UpdateView):
-    model = Asiento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class EliminarAsiento(DeleteView):
-    model = Asiento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
 
 class AdministrarEvento(View):
     model = Evento
@@ -648,49 +608,7 @@ class EliminarEvento(DeleteView):
 
         return redirect('panelAdmin')
 
-class AgregarZonaEvento(CreateView):
-    model = Zona_evento
-    template_name = 'PanelAdmin/agregarZonaEvento.html'
-    fields = '__all__'
 
-    def get_success_url(self):
-        return reverse('panelAdmin')
-
-class EditarZonaEvento(UpdateView):
-    model = Zona_evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class EliminarZonaEvento(DeleteView):
-    model = Zona_evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class AgregarAsientoEvento(CreateView):
-    model = Asiento_evento
-    template_name = 'PanelAdmin/agregarAsientoEvento.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('panelAdmin')
-
-class EditarAsientoEvento(UpdateView):
-    model = Asiento_evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
-
-class EliminarAsientoEvento(DeleteView):
-    model = Asiento_evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
 
 """PAYPAL"""
 
@@ -698,20 +616,18 @@ class EliminarAsientoEvento(DeleteView):
 class Paypal(TemplateView):
     template_name = 'main/paypal.html'
     def get(self, request):
-        print("Entramos a get paypal")
+
         """recuperar total y pasarla por parametros"""
         if 'datosCompra' in request.session:
             entradas = request.session['datosCompra']
 
             data = json.loads(entradas)
             total = data['precio_total']
-        print(self)
-        print(request)
-        print("Antes de render paypal")
+
         return render(request, self.template_name, {'total': total})
 
     def post(self, request):
-        print("Entramos a post paypal")
+
         return redirect('resumenCompra')
 
 def pago(request):
@@ -849,6 +765,8 @@ class ResumenCompra(TemplateView):
         return render(request, self.template_name, {'ultimo_pedido': ultimo_pedido, 'asientos': asientos})
 
 class PaypalClient:
+    """Constructor de la clase PaypalClient.
+        Inicializa las credenciales de cliente y el entorno de sandbox de PayPal."""
     def __init__(self):
         self.client_id = "AUaptIISTlY2j2l7TOT4NgG_R-ow7ZKZEP-qmTDGmhY5kItHZgk4P-vYLlX1Hr7iVHFoBRMmg-n0vIJD"
         self.client_secret = "EL88ceYkvO1RSMAKzkRUEHdPU4IJtiIDLe_aBJM1s2m88slXIsfJOJRo2JLdJba7uyKKp1sVV0cWPTrn"
@@ -880,10 +798,15 @@ class PaypalClient:
                 return result
 
     def is_primittive(self, data):
+        """Devuelve True si el dato es una cadena de texto (str), unicode o entero (int).
+            Devuelve False en caso contrario."""
         return isinstance(data, str) or isinstance(data, unicode) or isinstance(data, int)
 
 
 class GetOrder(PaypalClient):
+    """Obtiene una orden específica de PayPal.
+        Recibe un ID de orden y realiza una solicitud a la API de PayPal para obtener los detalles de esa orden.
+        Devuelve la respuesta obtenida."""
     def get_order(self, order_id):
         request = OrdersGetRequest(order_id)
         response = self.client.execute(request)
@@ -892,6 +815,12 @@ class GetOrder(PaypalClient):
 #     GetOrder().get_order('REPLACE-WITH-VALID-ORDER-ID')
 
 class CaptureOrder(PaypalClient):
+    """Captura una orden específica de PayPal.
+        Recibe un ID de orden y realiza una solicitud a la API de PayPal para capturar dicha orden.
+        Devuelve la respuesta obtenida.
+        :param order_id: El ID de la orden a capturar.
+        :param debug: Bandera opcional para activar el modo de depuración. Por defecto, es False.
+        :return: La respuesta obtenida al capturar la orden."""
     def capture_order(self, order_id, debug=False):
         request = OrdersCaptureRequest(order_id)
         response = self.client.execute(request)

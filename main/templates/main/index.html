@@ -74,7 +74,11 @@
                     {% if x.fecha_hora < ahora %}
                     <p style="color: red;">El evento ya no está disponible.</p>
                     {% else %}
-                    <a href="{% url 'eventoDetalle' pk=x.id %}" class="btn btn-info">Comprar entradas</a>
+                        {% if x.disponibles == 0 %}
+                            <p style="color: red;">ENTRADAS AGOTADAS</p>
+                        {% else %}
+                            <a href="{% url 'eventoDetalle' pk=x.id %}" class="btn btn-info">Comprar entradas</a>
+                        {% endif %}
                     {% endif %}
               </div>
             </div>
