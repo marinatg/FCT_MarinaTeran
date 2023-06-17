@@ -6,10 +6,9 @@
 
         {% for x in cliente %}
         <tr>
-            <td>Usuario: {{ x.usuario_id }}</td>
+            <td>Usuario: {{ x.username }}</td>
             <td>Nº compras: {{ x.nCompras }}</td>
-            <td>Importe total: {{ x.total }}</td>
-            <td><button style="border: none;"><a class="btn btn-info" id="compraDetalle" href="{% url 'compraDetalle' x.id %}" role="button">ver detalle</a></button></td>
+            <td>Importe total: {{ x.nTotal }}</td>
         </tr>
         {% endfor %}
     </table>

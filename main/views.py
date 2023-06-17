@@ -4,7 +4,7 @@ import pytz
 from cffi.backend_ctypes import unicode
 from django.contrib.sessions import serializers
 
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, resolve
@@ -834,8 +834,7 @@ class CaptureOrder(PaypalClient):
 
 class Top5clientes(TemplateView):
     def get(self, request, *args, **kwargs):
-        cliente = Compra_total.objects.annotate(nCompras=Count('usuario__id')).order_by('-nCompras')[:5]
-        print(cliente)
+        cliente = User.objects.annotate(nCompras=Count('compra_total__id'),nTotal=Sum('compra_total__total')).order_by('-nCompras')[:5]
 
         return render(request, 'PanelAdmin/top5clientes.html', {'cliente': cliente})
 
@@ -846,8 +845,10 @@ class ComprasPorUsuario(ListView):
     def get(self, request, *args, **kwargs):
         compras = Compra_total.objects.all()
         busqueda = request.GET.get("buscar")
-
+        print(busqueda)
         if busqueda:
-            compras = Compra_total.objects.filter(usuario_id__icontains=busqueda)
+            usuario = User.objects.filter(username__icontains=busqueda)
+            compras = Compra_total.objects.filter(usuario__username__contains=busqueda)
+            print(compras)
 
         return render(request, 'PanelAdmin/comprasPorUsuario.html', {'compras': compras})
