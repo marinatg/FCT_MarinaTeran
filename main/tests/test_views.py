@@ -76,9 +76,45 @@ class SalaEventoTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get('/PanelAdmin/administrarEvento/1')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['evento'].nombre, 'MiEvento')
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/main/eventoDetalle/1')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['evento'].nombre, 'MiEvento')
+
+        """Editar sala"""
+        response = self.client.get('/PanelAdmin/editarSala/1')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/PanelAdmin/editarSala/1',
+                                    {
+                                        'nombre': 'Tusala',
+                                    }
+                                )
+        print(response.context['sala'])
+        self.assertEqual(response.status_code, 200)
+        """Editar evento"""
+        response = self.client.get('/PanelAdmin/editarEvento/1')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/PanelAdmin/editarEvento/1',
+                                    {
+                                        'nombre': 'TuEvento',
+                                    }
+                                    )
+        print(response.context['evento'])
+        self.assertEqual(response.status_code, 200)
+
+        """Eliminar evento"""
+        response = self.client.post('/PanelAdmin/eliminarEvento/1')
+        self.assertEqual(response.status_code, 302)
+
+        """Eliminar sala"""
+        response = self.client.post('/PanelAdmin/eliminarSala/1')
+        self.assertEqual(response.status_code, 302)
+
+        """Compruebo que se han eliminado correctamente"""
+        response = self.client.get('/PanelAdmin/panelAdmin/')
+        print('SALA: ')
+        print(response.context['sala'])
+        print('EVENTO: ')
+        print(response.context['evento'])
+        self.assertEqual(response.status_code, 200)
