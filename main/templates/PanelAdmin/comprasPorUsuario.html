@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+<html>
+{% block content %}
+        <h3 class="text-center">COMPRAS POR USUARIO:</h3>
+        <div class="col text-center">
+                    <form method="get">
+                        <input type="text" placeholder="Buscar cliente..." name="buscar" style="width: 200px;">
+                        <button class="btn btn-info" type="submit">Buscar</button>
+                    </form>
+                </div>
+        <table class="table table-info table-bordered mb-5">
+        {% for x in object_list %}
+            <tr>
+
+                <td><label type="text" name="fecha">Fecha: {{ x.fecha_hora }}</label></td>
+
+                <td><label type="text" name="total">Total: {{ x.total }}€</label></td>
+
+                <td><label type="text" name="perfil">Perfil: {{ x.usuario.username }}</label></td>
+
+                <td><button style="border: none;"><a class="btn btn-info" id="compraDetalle" href="{% url 'compraDetalle' pk=x.id %}" role="button">ver detalle</a></button></td>
+            </tr>
+        {% endfor %}
+        </table>
+</body>
+{%  endblock %}
+</html>

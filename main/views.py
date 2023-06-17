@@ -4,7 +4,7 @@ import pytz
 from cffi.backend_ctypes import unicode
 from django.contrib.sessions import serializers
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, resolve
@@ -829,3 +829,25 @@ class CaptureOrder(PaypalClient):
 # if __name__ == "__main":
 #     order_id = ""
 #     CaptureOrder().capture_order(order_id, debug=True)
+
+"""INFORMES"""
+
+class Top5clientes(TemplateView):
+    def get(self, request, *args, **kwargs):
+        cliente = Compra_total.objects.annotate(nCompras=Count('usuario__id')).order_by('-nCompras')[:5]
+        print(cliente)
+
+        return render(request, 'PanelAdmin/top5clientes.html', {'cliente': cliente})
+
+class ComprasPorUsuario(ListView):
+    model = Compra_total
+    fields = '__all__'
+    template_name = 'PanelAdmin/comprasPorUsuario.html'
+    def get(self, request, *args, **kwargs):
+        compras = Compra_total.objects.all()
+        busqueda = request.GET.get("buscar")
+
+        if busqueda:
+            compras = Compra_total.objects.filter(usuario_id__icontains=busqueda)
+
+        return render(request, 'PanelAdmin/comprasPorUsuario.html', {'compras': compras})

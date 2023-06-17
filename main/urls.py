@@ -34,6 +34,8 @@ urlpatterns = [
     # path('main/generar_pdf/', views.generar_pdf, name='generar_pdf'),
     path('main/resumenCompra/', views.ResumenCompra.as_view(template_name='main/resumenCompra.html'), name='resumenCompra'),
     path('main/compraDetalle/<int:pk>', views.CompraDetalle.as_view(template_name='main/resumenCompra.html'), name='compraDetalle'),
+    path('PanelAdmin/Top5clientes/', views.Top5clientes.as_view(), name='top5clientes'),
+    path('PanelAdmin/ComprasPorUsuario/', views.ComprasPorUsuario.as_view(), name='comprasPorUsuario'),
 
 
 

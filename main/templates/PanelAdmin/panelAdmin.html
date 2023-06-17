@@ -38,6 +38,14 @@
                 </table>
             </td>
         </tr>
+        <tr class="container-flex align-items-center">
+            <tr><td><h6 class="text-center">Informes</h6></td></tr>
+            <table class="table table-hover">
+            <tr class="table-primary"><td><a class="link-dark" name="top5clientes" id="top5clientes" href="{% url 'top5clientes' %}" role="button">Top 5 clientes (por importe gastado)</a></td></tr>
+            <tr class="table-primary"><td><a class="link-dark" name="comprasPorUsuario" id="comprasPorUsuario" href="{% url 'comprasPorUsuario' %}" role="button">Buscar compras por usuario</a></td></tr>
+            </table>
+        </tr>
+
     </table>
 </div>
 {% endblock %}
