@@ -1,11 +1,12 @@
 from datetime import datetime
 from io import BytesIO
-
 import pytz
 from django.test import TestCase
-import pytest
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
+
+from main.models import Sala, Evento
 from main.tests.factories import UsuarioAdminFactory, UsuarioComunFactory
 
 
@@ -30,6 +31,7 @@ class SalaEventoTestCase(TestCase):
         self.superuser.set_password('marina')
         self.superuser.save()
         self.client.login(username='marina_superuser', password='marina')
+        print('USUARIO LOGUEADO.')
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/PanelAdmin/panelAdmin/')
@@ -53,6 +55,7 @@ class SalaEventoTestCase(TestCase):
                                     }
                                 )
         img4.close()
+        print('SALA CREADA')
         self.assertEqual(response.status_code, 302)
         response = self.client.get('/PanelAdmin/administrarSala/1')
         self.assertEqual(response.status_code, 200)
@@ -64,57 +67,61 @@ class SalaEventoTestCase(TestCase):
             b"GIF89a\x01\x00\x01\x00\x00\x00\x00!\xf9\x04\x01\x00\x00\x00"
             b"\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x01\x00\x00")
         img2.name = "myimage.gif"
+        sala = Sala.objects.all().last()
         response = self.client.post('/PanelAdmin/agregarEvento/',
                                     {
                                         'nombre': 'MiEvento',
                                         'imagen': img2,
                                         'fecha_hora': datetime.now(pytz.utc),
-                                        'sala': 1,
+                                        'sala': sala.id,
                                     }
                                     )
         img2.close()
+        print('EVENTO CREADO')
         self.assertEqual(response.status_code, 302)
         response = self.client.get('/PanelAdmin/administrarEvento/1')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/main/eventoDetalle/1')
+        evento = Evento.objects.all().last()
+        response = self.client.get('/main/eventoDetalle/' + str(evento.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['evento'].nombre, 'MiEvento')
 
         """Editar sala"""
-        response = self.client.get('/PanelAdmin/editarSala/1')
+        response = self.client.get('/PanelAdmin/editarSala/' + str(sala.id))
         self.assertEqual(response.status_code, 200)
-        response = self.client.post('/PanelAdmin/editarSala/1',
+        response = self.client.post('/PanelAdmin/editarSala/' + str(sala.id),
                                     {
                                         'nombre': 'Tusala',
                                     }
                                 )
-        print(response.context['sala'])
-        self.assertEqual(response.status_code, 200)
+        print('SALA EDITADA')
+        self.assertEqual(response.status_code, 302)
         """Editar evento"""
-        response = self.client.get('/PanelAdmin/editarEvento/1')
+        response = self.client.get('/PanelAdmin/editarEvento/' + str(evento.id))
         self.assertEqual(response.status_code, 200)
-        response = self.client.post('/PanelAdmin/editarEvento/1',
+        response = self.client.post('/PanelAdmin/editarEvento/' + str(evento.id),
                                     {
                                         'nombre': 'TuEvento',
                                     }
                                     )
+        print('EVENTO EDITADO:')
         print(response.context['evento'])
         self.assertEqual(response.status_code, 200)
 
         """Eliminar evento"""
-        response = self.client.post('/PanelAdmin/eliminarEvento/1')
+        response = self.client.post('/PanelAdmin/eliminarEvento/' + str(evento.id))
         self.assertEqual(response.status_code, 302)
 
         """Eliminar sala"""
-        response = self.client.post('/PanelAdmin/eliminarSala/1')
+        response = self.client.post('/PanelAdmin/eliminarSala/' + str(sala.id))
         self.assertEqual(response.status_code, 302)
 
         """Compruebo que se han eliminado correctamente"""
         response = self.client.get('/PanelAdmin/panelAdmin/')
-        print('SALA: ')
+        print('SALA ELIMINADA: ')
         print(response.context['sala'])
-        print('EVENTO: ')
+        print('EVENTO ELIMINADO: ')
         print(response.context['evento'])
         self.assertEqual(response.status_code, 200)

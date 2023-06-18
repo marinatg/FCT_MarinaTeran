@@ -1,6 +1,9 @@
 import factory
 from django.contrib.auth.models import User
 
+from main.models import Sala, Evento
+
+
 class UsuarioComunFactory(factory.Factory):
     class Meta:
         model = User
@@ -29,3 +32,4 @@ class UsuarioStaffFactory(factory.django.DjangoModelFactory):
     username = "marina_staff"
     email = 'usuarioprueba@gmail.com'
     is_staff = True
+

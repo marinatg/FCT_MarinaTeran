@@ -442,7 +442,7 @@ class AgregarSala(View):
 
 class EditarSala(UpdateView):
     model = Sala
-    fields = '__all__'
+    fields = ['nombre', 'mapa']
 
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
@@ -486,13 +486,6 @@ class EliminarSala(DeleteView):
 
         return redirect('panelAdmin')
 
-
-class EditarEvento(UpdateView):
-    model = Evento
-    fields = '__all__'
-
-    def get_success_url(self, **kwargs):
-        return reverse('panelAdmin')
 
 
 class AdministrarEvento(View):
@@ -574,7 +567,7 @@ class AsignarPrecioZonaEvento(View):
 
 class EditarEvento(UpdateView):
     model = Evento
-    fields = '__all__'
+    fields = ['nombre', 'imagen', 'fecha_hora']
 
     def get_success_url(self, **kwargs):
         return reverse('panelAdmin')
