@@ -68,7 +68,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'paypalcheckoutsdk',
-]
+    'pytest',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -166,5 +167,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIR, 'imagenes/') # 'data' is my media folder
-# MEDIA_URL = '/imagenes/'
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIR, 'imagenes/') # 'data' is my media folder
+MEDIA_URL = '/imagenes/'

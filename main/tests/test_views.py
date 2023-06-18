@@ -2,9 +2,8 @@ from datetime import datetime
 from io import BytesIO
 import pytz
 from django.test import TestCase
-
+import pytest
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
 
 from main.models import Sala, Evento
 from main.tests.factories import UsuarioAdminFactory, UsuarioComunFactory

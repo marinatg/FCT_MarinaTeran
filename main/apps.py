@@ -7,3 +7,5 @@ class TiendaV1Config(AppConfig):
 
 class PaypalConfig(AppConfig):
     name = 'paypal'
+
+
